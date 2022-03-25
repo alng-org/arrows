@@ -1,9 +1,13 @@
+function fhtml(str){
+    const div=document.createElement("div");
+    div.innerText=str;
+    return div.getInnerHTML();
+}
+function tonode(html){
+    let range = document.createRange();
+    return range.createContextualFragment(html);
+}
 function format(str,keys){
-    let fhtml=function(str){
-        const div=document.createElement("div");
-        div.innerText=str;
-        return div.getInnerHTML();
-    }
     str=`\x01${str}\0`;
     for (let key of keys){
         str=str.replaceAll(key,`\0\x02${key}\0\x01`);
@@ -11,8 +15,7 @@ function format(str,keys){
     str=fhtml(str).replaceAll("\x01",`<span class="text" style="color:black;">`)
                   .replaceAll("\x02",`<span class="text" style="color:red;">`)
                   .replaceAll("\0",`</span>`);
-    let range = document.createRange();
-    return range.createContextualFragment(str);
+    return tonode(str);
 }
 function edit(str,keys){
     range=window.getSelection().getRangeAt(0);
@@ -37,17 +40,20 @@ function init(code,keys){
             event.preventDefault();
             rng=window.getSelection().getRangeAt(0);
             edit(event.data,keys);
+        }else if(/insertCompositionText/.test(event.inputType)){
+            event.preventDefault();
         }
     });
     code.addEventListener('compositionstart', (event) => {
-        init.crng=window.getSelection().getRangeAt(0);
+        rng=window.getSelection().getRangeAt(0);
+        rng.deleteContents();
+        rng.insertNode(tonode(`<span id="cop" style="color:green">|</span>`));
+        rng.setStart(document.getElementById("cop"),0);
+        rng.setEnd(document.getElementById("cop"),1);
     });
     code.addEventListener('compositionend', (event) => {
         rng=window.getSelection().getRangeAt(0);
-        console.log("NOW! ",rng);
-        rng.setStart(init.crng.startContainer,init.crng.startOffset);
-        console.log(init.crng,rng);
-        event.preventDefault();
+        rng.selectNode(document.getElementById("cop"));
         edit(rng.toString(),keys);
     });
     code.addEventListener("paste", async (event) => {
