@@ -36,7 +36,6 @@ function init(code,keys){
         }
     });
     code.addEventListener("beforeinput", (event) => {
-        log(event.inputType.toString());
         if(/insertText/.test(event.inputType)){
             event.preventDefault();
             rng=window.getSelection().getRangeAt(0);
@@ -46,15 +45,15 @@ function init(code,keys){
         }
     });
     code.addEventListener('compositionstart', (event) => {
-        log(JSON.stringify(event));
         rng=window.getSelection().getRangeAt(0);
         rng.deleteContents();
-        rng.insertNode(tonode(`<span id="cop" style="color:green">|</span>`));
+        rng.insertNode(tonode(`<span id="cop" style="color:green;">&nbsp;</span>`));
         rng.setStart(document.getElementById("cop"),0);
         rng.setEnd(document.getElementById("cop"),1);
     });
     code.addEventListener('compositionend', (event) => {
         rng=window.getSelection().getRangeAt(0);
+        log("HERE");
         rng.selectNode(document.getElementById("cop"));
         edit(rng.toString(),keys);
     });
