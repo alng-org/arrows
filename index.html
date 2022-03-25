@@ -3,11 +3,18 @@
 <head>
     <script src="keys.js"></script>
     <script src="edit.js"></script>
+    <script src="log.js"></script>
 </head>
 <body onload="init(document.getElementById('edit'),keys())">
     <div id="edit" contenteditable="true" style="font-family:math;color:inherit;
                                    font-size:2em;font-weight:bold;
                                    background-color:rgba(255,255,200,1);
-                                   width:100%;height:85%;position:fixed;
-                                   overflow:scroll;white-space:nowrap;" id="edit"></div>
+                                   width:95%;height:45%;position:fixed;
+                                   overflow:scroll;white-space:nowrap;"></div>
+    <div id="log" style="font-family:math;color:inherit;
+    font-size:2em;font-weight:bold;
+    background-color:rgba(255,255,200,1);
+    top:50%;
+    width:95%;height:45%;position:fixed;
+    overflow:scroll;white-space:nowrap;" ondblclick="this.innerText='Log:\n'">Log:<br></div>
 </body>
