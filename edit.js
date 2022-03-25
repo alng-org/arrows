@@ -36,7 +36,7 @@ function init(code,keys){
         }
     });
     code.addEventListener("beforeinput", (event) => {
-        log(event.inputType);
+        log(event.inputType.toString());
         if(/insertText/.test(event.inputType)){
             event.preventDefault();
             rng=window.getSelection().getRangeAt(0);
@@ -46,7 +46,7 @@ function init(code,keys){
         }
     });
     code.addEventListener('compositionstart', (event) => {
-        log(event.type);
+        log(JSON.stringify(event));
         rng=window.getSelection().getRangeAt(0);
         rng.deleteContents();
         rng.insertNode(tonode(`<span id="cop" style="color:green">|</span>`));
