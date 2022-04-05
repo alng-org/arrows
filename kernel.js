@@ -1,5 +1,81 @@
 let map={};
-function getsrc(code){
+function fhtml(str){
+    const div=document.createElement("div");
+    div.innerText=str;
+    return div.innerHTML;
+}
+function tonode(html){
+    let range = document.createRange();
+    return range.createContextualFragment(html);
+}
+function isgroup(node){
+    return node!=null&&node!=undefined&&node.nodeName=="SPAN"&&node.className=="group";
+}
+function mingroup(node){
+    while(node.id!="code"){
+        if(isgroup(node)){
+            return node;
+        }else{
+            node=node.parentElement;
+        }
+    }
+    return null;
+}
+function focusingroup(node){
+    let fset=(container,bcolor,color,acolor)=>{
+        container.normalize();
+        let nodes=container.getElementsByClassName("group");
+        for (let node of nodes){
+            node.style.backgroundColor=bcolor;
+            node.style.color=color;
+        }
+        nodes=container.getElementsByClassName("arrows");
+        for (let node of nodes){
+            node.style.color=acolor;
+        }
+    };
+    fset(document,"dimgray","gray","lightgray");
+    if(node.className=="group"){
+        fset(node,"darkgreen","green","lightgreen");
+        node.style.backgroundColor="darkgreen";
+        node.style.color="darkorange";
+        let nds=node.getElementsByClassName("arrows");
+        for(let nd of nds){
+            if(nd.parentElement==node){
+                nd.style.color="hotpink";
+            }
+        }
+    }
+}
+function format(src,keys){
+    for(let key of keys.list){
+        if(keys.isleft(key)){
+            src=src.replaceAll(key,`\x01\0${key}\0`);
+        }else if(keys.isright(key)){
+            src=src.replaceAll(key,`\0${key}\0\x02`);
+        }else{
+            src=src.replaceAll(key,`\0${key}\0`);
+        }
+    }
+    let st=0;
+    for(let ch of src){
+        if(ch=="\x01"){
+            st=st+1;
+        }else if(ch=="\x02"){
+            st=st-1;
+        }
+    }
+    if(st==0){
+        src=fhtml(src).replace(/\0.*?\0/g,`<span class="arrows">$&</span>`)
+                      .replace(/\x01/g,`<span class="group">`)
+                      .replace(/\x02/g,`</span>`);
+        return tonode(src);
+    }else{
+        alert("couldn't format the data");
+        return tonode(``);
+    }
+}
+function getsrc(code){ //reverse : format
     let src=``;
     for(let node of code.childNodes){
         if(node.nodeName=="DIV"&&node.innerHTML==``){
@@ -12,13 +88,18 @@ function getsrc(code){
         }else if(node.nodeName=="DIV"){
             if(node==code.firstChild){
                 src=src+getsrc(node);
-                if(node!=code.lastChild&&node.nextSibling.nodeName!="DIV"){
-                    src=src+"\n";
-                }
             }else{
                 src=src+"\n"+getsrc(node);
             }
-        }else{
+            if(node.nextSibling!=null&&node.nextSibling.nodeName!="DIV"){
+                src=src+"\n";
+            }
+        }else if(node.nodeName=="BR"&&node.nextSibling!=null){
+            src=src+"\n";
+        }/*else if(node.nodeName=="IMG"||
+                (isgroup(node))){
+            src=src+`\0\x01${node.outerHTML}\0`;
+        }*/else{
             src=src+getsrc(node);
         }
     }

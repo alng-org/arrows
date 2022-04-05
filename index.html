@@ -3,10 +3,14 @@
 <head>
     <script src="keys.js"></script>
     <script src="kernel.js"></script>
+    <script src="select.js"></script>
+    <script src="lines.js"></script>
     <script src="edit.js"></script>
+    <script src="fevent.js"></script>
+    <script src="init.js"></script>
 </head>
 <body onload="init(document.getElementById('code'),keys())">
-    <input id="name" list="sug" placeholder="Take a Name"
+    <input id="name" list="sug" placeholder="Type a Name"
            style="font-size:1.5em;font-weight:bold;
                   background-color: aqua;
                   left:0%;top:0%;position:fixed;
@@ -16,9 +20,9 @@
       onfocus="this.dataset.last=this.value"/>
     <datalist id="sug"></datalist>
     <div id="code" contenteditable="true" style="font-family:math;color:inherit;
-                                   font-size:2em;font-weight:bold;
-                                   background-color:rgba(255,255,200,1);
+                                   font-size:5em;font-weight:bold;
+                                   background-color:black;
                                    left:0%;top:5%;position:fixed;
                                    width:100%;height:95%;
-                                   overflow:scroll;white-space:nowrap;"></div>
+                                   overflow:scroll;white-space:pre;"></div>
 </body>
