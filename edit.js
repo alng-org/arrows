@@ -1,6 +1,6 @@
 function edit(str,keys){
     range=getsel();
-    reselect(range);
+    range=reselect(range);
     range.deleteContents();
     if(mingroup(range.commonAncestorContainer)!=null){
         range.insertNode(format(str,keys));

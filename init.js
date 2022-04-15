@@ -1,10 +1,10 @@
 function init(code,keys){
     initmap(code);
     code.addEventListener("click",(event)=>{
-        focusingroup(common_min_asone(getsel()));
+        focusingroup(common_min_asone(getsel()),keys);
     });
     code.addEventListener("keydown",keydown(keys));
-    code.addEventListener("keyup",keyup())
+    code.addEventListener("keyup",keyup(keys));
     code.addEventListener("beforeinput", beforeinput(keys));
     code.addEventListener('compositionstart', compositionstart());
     //code.addEventListener('compositiin')

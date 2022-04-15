@@ -21,30 +21,48 @@ function mingroup(node){
     }
     return null;
 }
-function focusingroup(node){
-    let fset=(container,bcolor,color,acolor)=>{
+function focusingroup(node,keys){
+    let fset=(container,bcolor,color,acolor,visual)=>{
         container.normalize();
         let nodes=container.getElementsByClassName("group");
         for (let node of nodes){
             node.style.backgroundColor=bcolor;
             node.style.color=color;
+            if(visual){
+                if(node.firstChild.innerText==keys.left){
+                    node.firstChild.innerText=keys.visual_left;
+                }
+                if(node.lastChild.innerText==keys.right){
+                    node.lastChild.innerText=keys.visual_right;
+                }
+            }else{
+                if(node.firstChild.innerText==keys.visual_left){
+                    node.firstChild.innerText=keys.left;
+                }
+                if(node.lastChild.innerText==keys.visual_right){
+                    node.lastChild.innerText=keys.right;
+                }
+            }
         }
         nodes=container.getElementsByClassName("arrows");
         for (let node of nodes){
             node.style.color=acolor;
         }
     };
-    fset(document,"dimgray","gray","lightgray");
-    if(node.className=="group"){
-        fset(node,"darkgreen","green","lightgreen");
-        node.style.backgroundColor="darkgreen";
-        node.style.color="darkorange";
+    fset(document,"lightgray","darkgreen","lightseagreen",false);
+    if(isgroup(node)){
+        fset(node,"pink","darkgreen","lightseagreen",true);
+        node.style.backgroundColor="pink";
+        node.style.color="darkred";
         let nds=node.getElementsByClassName("arrows");
         for(let nd of nds){
             if(nd.parentElement==node){
-                nd.style.color="hotpink";
+                nd.style.color="red";
             }
         }
+    }else{
+        node=document.getElementById(`init`).parentElement;
+        fset(node,"lightgray","darkgreen","lightseagreen",true);
     }
 }
 function format(src,keys){
@@ -59,19 +77,22 @@ function format(src,keys){
     }
     let st=0;
     for(let ch of src){
-        if(ch=="\x01"){
+        if(ch==`\x01`){
             st=st+1;
-        }else if(ch=="\x02"){
+        }else if(ch==`\x02`){
             st=st-1;
+            if(st<0){
+                break;
+            }
         }
     }
     if(st==0){
-        src=fhtml(src).replace(/\0.*?\0/g,`<span class="arrows">$&</span>`)
+        src=fhtml(src).replace(/\0.*?\0/g,`<span class="arrows" style="color:red;">$&</span>`)
                       .replace(/\x01/g,`<span class="group">`)
                       .replace(/\x02/g,`</span>`);
         return tonode(src);
     }else{
-        alert("couldn't format the data");
+        alert("grammer error!");
         return tonode(``);
     }
 }

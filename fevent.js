@@ -7,24 +7,18 @@ function keydown(keys) {
                 event.preventDefault();
                 newline(keys);
             }else if(event.altKey){
-                if(event.key=="g"||event.key=="G"){
-                    let gp=mingroup(getsel().commonAncestorContainer);
-                    let fst=getsrc(gp.childNodes[0]);
-                    if(keys.islink(fst)){
-                        let link=getsrc(gp);
-                        link=`https://${link.slice(1,link.length-1)}`;
-                        window.open(link);
-                    }
-                }else if(event.key=="s"||event=="S"){
+                if(event.key=="s"||event=="S"){
                     reselect(getsel(),true);
                 }
             }
         }
     };
 }
-function keyup() {
+function keyup(keys) {
     return (event) => {
-        focusingroup(common_min_asone(getsel()));
+        let sel=getsel();
+        sel=reselect(sel);
+        focusingroup(common_min_asone(sel),keys);
     };
 }
 function beforeinput(keys) {
