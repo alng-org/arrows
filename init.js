@@ -1,7 +1,7 @@
 function init(code,keys){
     initmap(code);
     code.addEventListener("click",(event)=>{
-        focusingroup(common_min_asone(getsel()),keys);
+        focusingroup(common_min_asone(getsel()));
     });
     code.addEventListener("keydown",keydown(keys));
     code.addEventListener("keyup",keyup(keys));

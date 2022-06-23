@@ -9,7 +9,7 @@ function tonode(html){
     return range.createContextualFragment(html);
 }
 function isgroup(node){
-    return node!=null&&node!=undefined&&node.nodeName=="SPAN"&&node.className=="group";
+    return node!=null&&node!=undefined&&node.nodeName=="SPAN"&&/group/.test(node.className);
 }
 function mingroup(node){
     while(node.id!="code"){
@@ -21,49 +21,22 @@ function mingroup(node){
     }
     return null;
 }
-function focusingroup(node,keys){
-    let fset=(container,bcolor,color,acolor,visual)=>{
-        container.normalize();
-        let nodes=container.getElementsByClassName("group");
-        for (let node of nodes){
-            node.style.backgroundColor=bcolor;
-            node.style.color=color;
-            if(visual){
-                if(node.firstChild.innerText==keys.left){
-                    node.firstChild.innerText=keys.visual_left;
-                }
-                if(node.lastChild.innerText==keys.right){
-                    node.lastChild.innerText=keys.visual_right;
-                }
-            }else{
-                if(node.firstChild.innerText==keys.visual_left){
-                    node.firstChild.innerText=keys.left;
-                }
-                if(node.lastChild.innerText==keys.visual_right){
-                    node.lastChild.innerText=keys.right;
-                }
+function focusingroup(node){
+    let fset=(container,classname,bcolor,color,acolor)=>{
+        if(isgroup(container)){
+            container.normalize();
+            container.className=classname;
+            container.style.backgroundColor=bcolor;
+            container.style.color=color;
+            let nodes=container.getElementsByClassName("arrows");
+            for (let node of nodes){
+                node.style.color=acolor;
             }
-        }
-        nodes=container.getElementsByClassName("arrows");
-        for (let node of nodes){
-            node.style.color=acolor;
         }
     };
-    fset(document,"lightgray","darkgreen","lightseagreen",false);
-    if(isgroup(node)){
-        fset(node,"pink","darkgreen","lightseagreen",true);
-        node.style.backgroundColor="pink";
-        node.style.color="darkred";
-        let nds=node.getElementsByClassName("arrows");
-        for(let nd of nds){
-            if(nd.parentElement==node){
-                nd.style.color="red";
-            }
-        }
-    }else{
-        node=document.getElementById(`init`).parentElement;
-        fset(node,"lightgray","darkgreen","lightseagreen",true);
-    }
+    let last=document.getElementsByClassName("group_focus")[0];
+    fset(last,"group","","","lightgreen");
+    fset(node,"group_focus","yellow","darkred","red");
 }
 function format(src,keys){
     for(let key of keys.list){
@@ -130,7 +103,7 @@ function view(code,name){
     if(name.value!=``){
         code.focus();
         if(map[name.value]==undefined){
-            map[name.value]=``;
+            map[name.value]=keys().pair;
             let opt=document.createElement("option");
             opt.value=name.value;
             name.list.append(opt);

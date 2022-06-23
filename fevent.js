@@ -18,7 +18,7 @@ function keyup(keys) {
     return (event) => {
         let sel=getsel();
         sel=reselect(sel);
-        focusingroup(common_min_asone(sel),keys);
+        focusingroup(common_min_asone(sel));
     };
 }
 function beforeinput(keys) {

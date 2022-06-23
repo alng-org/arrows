@@ -1,53 +1,32 @@
 function keys(){
-    return {list:[`→`,
-                  `\u2061`,`↱`,`≝`,`≟`,
-                  `\u200b`,`↲`],
-            isleft:(key)=>(key==`\u2061`||key==`↱`||key==`≝`||key==`≟`),
-            isright:(key)=>(key==`\u200b`||key==`↲`),
-            left:`\u2061`,
-            visual_left:`↱`,
-            right:`\u200b`,//zero width space:u+200b
-            visual_right:`↲`,
+    return {list:[`→`,`❨`,`❩`],
+            isleft:(key)=>(key==`❨`),
+            isright:(key)=>(key==`❩`),
+            arrow:`→`,
+            pair:`❨❩`,
             input:keymap};
 }
-function pairkeys(){
-    let pk={};
-    pk[keys()[2]]=[keys()[3],keys()[5]];
-    pk[keys()[4]]=[keys()[5]];
-    return pk;
-}
-function insertpair(pair,change_pair){
-    if(change_pair){
-        let rng=reselect(getsel().cloneRange(),change_pair);
-        let gp=rng.endContainer.childNodes[rng.endOffset-1];
-        let left=pair.replaceAll(keys().right,``);
-        gp.childNodes[0].innerHTML=left;
-        return gp;
-    }else{
-        let rng=reselect(getsel());
-        let src=getsrc(rng.cloneContents());
-        rng=edit(pair,keys());
-        let gp=rng.endContainer.childNodes[rng.endOffset-1];
-        rng.setStart(gp,1);
-        rng.setEnd(gp,1);
-        edit(src,keys());
-        return gp;
-    }
+function insertpair(pair){
+    let rng=reselect(getsel());
+    let src=getsrc(rng.cloneContents());
+    rng=edit(pair,keys());
+    let gp=rng.endContainer.childNodes[rng.endOffset-1];
+    rng.setStart(gp,1);
+    rng.setEnd(gp,1);
+    edit(src,keys());
+    focusingroup(gp);
+    return gp;
 }
 function keymap(event = null) {
     if(event.altKey){
         if(/^(Arrow)?Right/.test(event.key)){
-            edit(`→`,keys());
+            edit(keys().arrow,keys());
             return true;
         }else if(/Enter/.test(event.key)){
-            insertpair(`\u2061\u200b`,event.shiftKey);
+            insertpair(keys().pair);
             return true;
-        }else if(/=|\+/.test(event.key)){
-            insertpair(`≝\u200b`,event.shiftKey);
-            return true;
-        }else if(/-|_/.test(event.key)){
-            insertpair(`≟\u200b`,event.shiftKey);
-            return true;
+        }else{
+            return false;
         }
     }
     return false;
@@ -59,10 +38,27 @@ function initmap(code){
     let rs=window.getSelection();
     rs.removeAllRanges();
     rs.addRange(rng);
-    rng.insertNode(format(`\u2061\u200b`,keys()));
+    rng.insertNode(format(keys().pair,keys()));
     let gp=rng.endContainer.childNodes[rng.endOffset-1];
     gp.id="init";
     rng.setStart(gp,1);
     rng.setEnd(gp,1);
-    focusingroup(gp,keys);
+    focusingroup(gp);
+    let f=(click,text,left,width)=>(`<button onclick="${click}"
+                                             style="font-family:math;
+                                                    font-size:1.5em;
+                                                    font-weight:bold;
+                                                    background-color:brown;
+                                                    color:orange;
+                                                    position:fixed;
+                                                    left:${left};top:95%;
+                                                    width:${width};height:5%">${text}</button>`);
+    let htmls=[f(`edit('${keys().arrow}',keys())`,
+                 `${keys().arrow} (Alt+${keys().arrow})`,
+                 "0%","50%"),
+               f(`insertpair('${keys().pair}')`,
+                 `${keys().pair} (Alt+Enter)`,
+                 "50%","50%")];
+    let html=htmls.reduce((x,y)=>(x+y));
+    document.body.append(tonode(html));
 }

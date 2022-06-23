@@ -9,20 +9,25 @@
     <script src="fevent.js"></script>
     <script src="init.js"></script>
 </head>
-<body onload="init(document.getElementById('code'),keys())">
+<body onload="init(document.getElementById('code'),keys())"
+      style="background-color:black">
     <input id="name" list="sug" placeholder="Type a Name"
            style="font-size:1.5em;font-weight:bold;
                   background-color: aqua;
                   left:0%;top:0%;position:fixed;
                   width:100%;height:5%;"
-      onchange="view(document.getElementById('code'),
-                     this)"
+      onchange="view(document.getElementById('code'),this)"
       onfocus="this.dataset.last=this.value"/>
     <datalist id="sug"></datalist>
-    <div id="code" contenteditable="true" style="font-family:math;color:inherit;
-                                   font-size:3.0em;font-weight:bold;
-                                   background-color:lightgray;
-                                   left:0%;top:5%;position:fixed;
-                                   width:100%;height:95%;
-                                   overflow:scroll;white-space:pre;"></div>
+    <div id="code" contenteditable="true" 
+                   style="font-family:math;
+                          font-size:3.0em;
+                          font-weight:bold;
+                          background-color:black;
+                          color:green;
+                          outline:none;
+                          position:fixed;
+                          left:0%;top:6%;
+                          width:100%;height:89%;
+                          overflow:scroll;white-space:pre;"></div>
 </body>
