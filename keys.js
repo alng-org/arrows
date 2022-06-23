@@ -51,12 +51,13 @@ function initmap(code){
                                                     background-color:brown;
                                                     color:orange;
                                                     position:fixed;
-                                                    left:${left};top:95%;
-                                                    width:${width};height:5%">${text}</button>`);
-    let htmls=[f(`edit('${keys().arrow}',keys())`,
+                                                    left:${left};top:90%;
+                                                    width:${width};height:10%">${text}</button>`);
+    let code_focus=`document.getElementById('code').focus()`;
+    let htmls=[f(`edit('${keys().arrow}',keys());${code_focus}`,
                  `${keys().arrow} (Alt+${keys().arrow})`,
                  "0%","50%"),
-               f(`insertpair('${keys().pair}')`,
+               f(`insertpair('${keys().pair}');${code_focus}`,
                  `${keys().pair} (Alt+Enter)`,
                  "50%","50%")];
     let html=htmls.reduce((x,y)=>(x+y));
