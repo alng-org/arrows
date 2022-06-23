@@ -1,10 +1,7 @@
 function init(code,keys){
     initmap(code);
-    code.addEventListener("click",(event)=>{
-        focusingroup(common_min_asone(getsel()));
-    });
+    setInterval(focus,100);
     code.addEventListener("keydown",keydown(keys));
-    code.addEventListener("keyup",keyup(keys));
     code.addEventListener("beforeinput", beforeinput(keys));
     code.addEventListener('compositionstart', compositionstart());
     //code.addEventListener('compositiin')
@@ -13,4 +10,9 @@ function init(code,keys){
     code.addEventListener("cut", cut(keys));
     code.addEventListener("paste", paste());
     code.addEventListener("input",input(keys, code));
+}
+function focus(){
+    let sel=getsel().cloneRange();
+    sel=reselect(sel);
+    focusingroup(common_min_asone(sel));
 }

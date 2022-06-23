@@ -31,7 +31,7 @@ function keymap(event = null) {
     }
     return false;
 }
-function initmap(code){
+function initmap(code,first=true){
     let rng=document.createRange();
     rng.setStart(code,0);
     rng.setEnd(code,0);
@@ -44,22 +44,24 @@ function initmap(code){
     rng.setStart(gp,1);
     rng.setEnd(gp,1);
     focusingroup(gp);
-    let f=(click,text,left,width)=>(`<button onclick="${click}"
+    if(first==true){
+        let f=(click,text,left,width)=>(`<button onclick="${click}"
                                              style="font-family:math;
-                                                    font-size:2em;
+                                                    font-size:3.0em;
                                                     font-weight:bold;
                                                     background-color:brown;
                                                     color:orange;
                                                     position:fixed;
                                                     left:${left};top:90%;
                                                     width:${width};height:10%">${text}</button>`);
-    let code_focus=`document.getElementById('code').focus()`;
-    let htmls=[f(`edit('${keys().arrow}',keys());${code_focus}`,
-                 `${keys().arrow} (Alt+${keys().arrow})`,
-                 "0%","50%"),
-               f(`insertpair('${keys().pair}');${code_focus}`,
-                 `${keys().pair} (Alt+Enter)`,
-                 "50%","50%")];
-    let html=htmls.reduce((x,y)=>(x+y));
-    document.body.append(tonode(html));
+        let code_focus=`document.getElementById('code').focus()`;
+        let htmls=[f(`edit('${keys().arrow}',keys());${code_focus}`,
+                     `${keys().arrow} (Alt+${keys().arrow})`,
+                     "0%","50%"),
+                   f(`insertpair('${keys().pair}');${code_focus}`,
+                     `${keys().pair} (Alt+Enter)`,
+                     "50%","50%")];
+        let html=htmls.reduce((x,y)=>(x+y));
+        document.body.append(tonode(html));
+    }
 }

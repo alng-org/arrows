@@ -103,7 +103,7 @@ function view(code,name){
     if(name.value!=``){
         code.focus();
         if(map[name.value]==undefined){
-            map[name.value]=keys().pair;
+            map[name.value]=``;
             let opt=document.createElement("option");
             opt.value=name.value;
             name.list.append(opt);
@@ -112,6 +112,10 @@ function view(code,name){
             map[name.dataset.last]=getsrc(code);
         }
         code.innerHTML=``;
-        code.append(format(map[name.value],keys()));
+        if(map[name.value]==``){
+            initmap(code,false);
+        }else{
+            code.append(format(map[name.value],keys()));
+        }
     }
 }
