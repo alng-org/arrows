@@ -46,7 +46,7 @@ function initmap(code){
     focusingroup(gp);
     let f=(click,text,left,width)=>(`<button onclick="${click}"
                                              style="font-family:math;
-                                                    font-size:1.5em;
+                                                    font-size:2em;
                                                     font-weight:bold;
                                                     background-color:brown;
                                                     color:orange;
