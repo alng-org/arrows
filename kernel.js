@@ -60,7 +60,7 @@ function format(src,keys){
         }
     }
     if(st==0){
-        src=fhtml(src).replace(/\0.*?\0/g,`<span class="arrows" style="color:red;">$&</span>`)
+        src=fhtml(src).replace(/\0.*?\0/g,`<span class="arrows" style="font-family:math;color:red;">$&</span>`)
                       .replace(/\x01/g,`<span class="group">`)
                       .replace(/\x02/g,`</span>`);
         return tonode(src);
