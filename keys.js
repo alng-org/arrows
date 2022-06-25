@@ -1,9 +1,9 @@
 function keys(){
-    return {list:[`→`,`\u200b`,`\u200c`],
-            isleft:(key)=>(key==`\u200b`),
-            isright:(key)=>(key==`\u200c`),
+    return {list:[`→`,`↑`,`↓`],
+            isleft:(key)=>(key==`↑`),
+            isright:(key)=>(key==`↓`),
             arrow:`→`,
-            pair:`\u200b\u200c`,
+            pair:`↑↓`,
             input:keymap};
 }
 function insertpair(pair){
