@@ -17,6 +17,20 @@ function insertpair(pair){
     focusingroup(gp);
     return gp;
 }
+function beforepair(rng){
+    rng.collapse(true);
+    let container=common_min_asone(rng);
+    rng.selectNode(container.childNodes[0]);
+    rng.collapse(true);
+    return reselect(rng);
+}
+function afterpair(rng){
+    rng.collapse(false);
+    let container=common_min_asone(rng);
+    rng.selectNode(container.childNodes[container.childNodes.length-1]);
+    rng.collapse(false);
+    return reselect(rng);
+}
 function keymap(event = null) {
     if(event.altKey){
         if(/^(Arrow)?Right/.test(event.key)){
@@ -24,6 +38,12 @@ function keymap(event = null) {
             return true;
         }else if(/Enter/.test(event.key)){
             insertpair(keys().pair);
+            return true;
+        }else if(/Home/.test(event.key)){
+            beforepair(getsel());
+            return true;
+        }else if(/End/.test(event.key)){
+            afterpair(getsel());
             return true;
         }else{
             return false;
@@ -47,7 +67,7 @@ function initmap(code,first=true){
     if(first==true){
         let f=(click,text,left,width)=>(`<button onclick="${click}"
                                              style="font-family:math;
-                                                    font-size:3.0em;
+                                                    font-size:2.5em;
                                                     font-weight:bold;
                                                     background-color:brown;
                                                     color:orange;
@@ -57,10 +77,16 @@ function initmap(code,first=true){
         let code_focus=`document.getElementById('code').focus()`;
         let htmls=[f(`edit('${keys().arrow}',keys());${code_focus}`,
                      `${keys().arrow} (Alt+${keys().arrow})`,
-                     "0%","50%"),
+                     "25%","25%"),
                    f(`insertpair('${keys().pair}');${code_focus}`,
                      `${keys().pair} (Alt+Enter)`,
-                     "50%","50%")];
+                     "50%","25%"),
+                    f(`beforepair(getsel());${code_focus}`,
+                      `<< (Alt+Home)`,
+                      "0%","25%"),
+                      f(`afterpair(getsel());${code_focus}`,
+                        `>> (Alt+End)`,
+                        "75%","25%")];
         let html=htmls.reduce((x,y)=>(x+y));
         document.body.append(tonode(html));
     }
