@@ -22,21 +22,26 @@ function mingroup(node){
     return null;
 }
 function focusingroup(node){
-    let fset=(container,classname,bcolor,color,acolor)=>{
+    let fset=(container,classname,bcolor,color,acolor,pcolor)=>{
         if(isgroup(container)){
             container.normalize();
             container.className=classname;
             container.style.backgroundColor=bcolor;
             container.style.color=color;
             let nodes=container.getElementsByClassName("arrows");
+            let isarrow=keys().isarrow;
             for (let node of nodes){
-                node.style.color=acolor;
+                if(isarrow(node.innerText)){
+                    node.style.color=acolor;
+                }else{
+                    node.style.color=pcolor;
+                }
             }
         }
     };
     let last=document.getElementsByClassName("group_focus")[0];
-    fset(last,"group","","","lightgreen");
-    fset(node,"group_focus","yellow","darkred","red");
+    fset(last,"group","","","lightcoral","lightskyblue");
+    fset(node,"group_focus","yellow","green","red","blue");
 }
 function format(src,keys){
     for(let key of keys.list){

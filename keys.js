@@ -1,9 +1,10 @@
 function keys(){
-    return {list:[`→`,`‵`,`‚`],
-            isleft:(key)=>(key==`‵`),
-            isright:(key)=>(key==`‚`),
+    return {list:[`→`,`›`,`‑`],
+            isarrow:(key)=>(key==`→`),
+            isleft:(key)=>(key==`›`),
+            isright:(key)=>(key==`‑`),
             arrow:`→`,
-            pair:`‵‚`,
+            pair:`›‑`,
             input:keymap};
 }
 function insertpair(pair){
