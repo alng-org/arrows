@@ -22,30 +22,39 @@ function mingroup(node){
     return null;
 }
 function focusingroup(node){
+    let fset=(container,classname,bcolor,color,acolor)=>{
+        if(isgroup(container)){
+            container.normalize();
+            container.className=classname;
+            container.style.backgroundColor=bcolor;
+            container.style.color=color;
+            let nodes=container.getElementsByClassName("arrows");
+            let flevel=(node)=>{
+                node=node.parentElement;
+                let level=0;
+                while(node.id!="init"){
+                    level=level+1;
+                    node=node.parentElement;
+                }
+                return level;
+            };
+            for (let node of nodes){
+                node.style.color=acolor(node.innerText,flevel(node));
+            }
+        }
+    };
+    let acolor=(key,level=0)=>{
+        if(keys().isarrow(key)){
+            return "indianred";
+        }else{
+            return ["lightskyblue","mediumpurple","lightpink"][level%3];
+        }
+    };
     let last=document.getElementsByClassName("group_focus")[0];
     if(last!=node){
-        let fset=(container,classname,bcolor,color,acolor)=>{
-            if(isgroup(container)){
-                container.normalize();
-                container.className=classname;
-                container.style.backgroundColor=bcolor;
-                container.style.color=color;
-                let nodes=container.getElementsByClassName("arrows");
-                for (let node of nodes){
-                    node.style.color=acolor(node.innerText);
-                }
-            }
-        };
-        let acolor=(key)=>{
-            if(keys().isarrow(key)){
-                return "lightcoral";
-            }else{
-                return "lightskyblue";
-            }
-        };
         fset(last,"group","","",acolor);
-        fset(node,"group_focus","yellow","green",keys().color);
     }
+    fset(node,"group_focus","khaki","green",keys().color);
 }
 function format(src,keys){
     for(let key of keys.list){

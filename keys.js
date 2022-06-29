@@ -5,11 +5,11 @@ function keys(){
             isright:(key)=>(key==`‑`),
             arrow:`→`,
             pair:`›‑`,
-            color:(key)=>{
+            color:(key,level=0)=>{
                     if(keys().isarrow(key)){
                         return "red";
                     }else{
-                        return "blue";
+                        return ["blue","blueviolet","hotpink"][level%3];
                     }
                 },
             input:keymap};
