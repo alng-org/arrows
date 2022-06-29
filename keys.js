@@ -5,6 +5,13 @@ function keys(){
             isright:(key)=>(key==`‑`),
             arrow:`→`,
             pair:`›‑`,
+            color:(key)=>{
+                    if(keys().isarrow(key)){
+                        return "red";
+                    }else{
+                        return "blue";
+                    }
+                },
             input:keymap};
 }
 function insertpair(pair){

@@ -22,35 +22,39 @@ function mingroup(node){
     return null;
 }
 function focusingroup(node){
-    let fset=(container,classname,bcolor,color,acolor,pcolor)=>{
-        if(isgroup(container)){
-            container.normalize();
-            container.className=classname;
-            container.style.backgroundColor=bcolor;
-            container.style.color=color;
-            let nodes=container.getElementsByClassName("arrows");
-            let isarrow=keys().isarrow;
-            for (let node of nodes){
-                if(isarrow(node.innerText)){
-                    node.style.color=acolor;
-                }else{
-                    node.style.color=pcolor;
+    let last=document.getElementsByClassName("group_focus")[0];
+    if(last!=node){
+        let fset=(container,classname,bcolor,color,acolor)=>{
+            if(isgroup(container)){
+                container.normalize();
+                container.className=classname;
+                container.style.backgroundColor=bcolor;
+                container.style.color=color;
+                let nodes=container.getElementsByClassName("arrows");
+                for (let node of nodes){
+                    node.style.color=acolor(node.innerText);
                 }
             }
-        }
-    };
-    let last=document.getElementsByClassName("group_focus")[0];
-    fset(last,"group","","","lightcoral","lightskyblue");
-    fset(node,"group_focus","yellow","green","red","blue");
+        };
+        let acolor=(key)=>{
+            if(keys().isarrow(key)){
+                return "lightcoral";
+            }else{
+                return "lightskyblue";
+            }
+        };
+        fset(last,"group","","",acolor);
+        fset(node,"group_focus","yellow","green",keys().color);
+    }
 }
 function format(src,keys){
     for(let key of keys.list){
         if(keys.isleft(key)){
-            src=src.replaceAll(key,`\x01\0${key}\0`);
+            src=src.replaceAll(key,`\x01\0${keys.color(key)} ${key}\0`);
         }else if(keys.isright(key)){
-            src=src.replaceAll(key,`\0${key}\0\x02`);
+            src=src.replaceAll(key,`\0${keys.color(key)} ${key}\0\x02`);
         }else{
-            src=src.replaceAll(key,`\0${key}\0`);
+            src=src.replaceAll(key,`\0${keys.color(key)} ${key}\0`);
         }
     }
     let st=0;
@@ -65,7 +69,7 @@ function format(src,keys){
         }
     }
     if(st==0){
-        src=fhtml(src).replace(/\0.*?\0/g,`<span class="arrows" style="font-family:math;color:red;">$&</span>`)
+        src=fhtml(src).replace(/\0(.*?) (.*?)\0/g,`<span class="arrows" style="font-family:math;color:$1;">$2</span>`)
                       .replace(/\x01/g,`<span class="group">`)
                       .replace(/\x02/g,`</span>`);
         return tonode(src);
