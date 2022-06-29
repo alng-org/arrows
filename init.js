@@ -1,5 +1,6 @@
 function init(code,keys){
     initmap(code);
+    code.focus();
     setInterval(focus,100);
     code.addEventListener("keydown",keydown(keys));
     code.addEventListener("beforeinput", beforeinput(keys));
