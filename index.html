@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width height=device-height initial-scale=1.0
+                               minimum-scale=1.0 maximum-scale=1.0 user-scalable=no">
 <head>
     <script src="keys.js"></script>
     <script src="kernel.js"></script>
@@ -9,20 +11,11 @@
     <script src="fevent.js"></script>
     <script src="init.js"></script>
 </head>
-<body onload="init(document.getElementById('code'),keys())"
+<body onload="init(document.getElementById('code'))"
       style="background-color:black">
-    <input id="name" list="sug" placeholder="Type a Name"
-           style="font-size:3.0em;font-weight:bold;
-                  background-color: aqua;
-                  position:fixed;
-                  left:0%;top:0%;
-                  width:100%;height:10%;"
-      onchange="view(document.getElementById('code'),this)"
-      onfocus="this.dataset.last=this.value"/>
-    <datalist id="sug"></datalist>
     <div id="code" contenteditable="true" 
                    style="font-family:math;
-                          font-size:3.0em;
+                          font-size:3.0vw;
                           font-weight:bold;
                           background-color:black;
                           color:lightgreen;
@@ -30,5 +23,6 @@
                           position:fixed;
                           left:0%;top:10%;
                           width:100%;height:80%;
-                          overflow:scroll;white-space:pre;"></div>
+                          overflow:scroll;white-space:pre;"
+                   onfocusout="keep_sel()"></div>
 </body>

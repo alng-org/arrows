@@ -1,9 +1,9 @@
-function edit(str,keys){
+function edit(str){
     range=getsel();
     range=reselect(range);
     range.deleteContents();
     if(mingroup(range.commonAncestorContainer)!=null){
-        range.insertNode(format(str,keys));
+        range.insertNode(format(str));
     }
     //let rng=range.cloneRange();
     range.collapse(false);

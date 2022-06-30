@@ -1,5 +1,5 @@
-function newline(keys){
-    return edit("\n",keys);
+function newline(){
+    return edit("\n");
     //rng.insertNode(tonode("<br>"));
 }
 function islinetab(node){

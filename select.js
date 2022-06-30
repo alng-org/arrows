@@ -39,7 +39,8 @@ function move(point,at,extend,fmove,fasone){
 }
 function common_min_asone(range,fasone=isgroup){
     let common=range.commonAncestorContainer;
-        while(common.id!="code"&&fasone(common)==false){
+        while(common!=null&&common!=undefined&&
+              common.id!="code"&&fasone(common)==false){
             common=common.parentElement;
         }
     return common;
@@ -115,6 +116,20 @@ function reselect(rng,forced_extend=false,common=undefined){
     }
     return rng;
 }
+let keeped_sel=undefined;
 function getsel(){
-    return window.getSelection().getRangeAt(0);
+    let sel=window.getSelection().getRangeAt(0);
+    return sel;
+}
+function keep_sel(){
+    keeped_sel=getsel().cloneRange();
+}
+function recover_sel(){
+    if(keeped_sel!=undefined){
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(keeped_sel);
+        return true;
+    }else{
+        return false;
+    }
 }

@@ -1,4 +1,3 @@
-let map={};
 function fhtml(str){
     const div=document.createElement("div");
     div.innerText=str;
@@ -12,7 +11,7 @@ function isgroup(node){
     return node!=null&&node!=undefined&&node.nodeName=="SPAN"&&/group/.test(node.className);
 }
 function mingroup(node){
-    while(node.id!="code"){
+    while(node!=null&&node!=undefined&&node.id!="code"){
         if(isgroup(node)){
             return node;
         }else{
@@ -56,14 +55,14 @@ function focusingroup(node){
     }
     fset(node,"group_focus","khaki","green",keys().color);
 }
-function format(src,keys){
-    for(let key of keys.list){
-        if(keys.isleft(key)){
-            src=src.replaceAll(key,`\x01\0${keys.color(key)} ${key}\0`);
-        }else if(keys.isright(key)){
-            src=src.replaceAll(key,`\0${keys.color(key)} ${key}\0\x02`);
+function format(src){
+    for(let key of keys().list){
+        if(keys().isleft(key)){
+            src=src.replaceAll(keys().code(key),`\x01\0${keys().color(key)} ${key}\0`);
+        }else if(keys().isright(key)){
+            src=src.replaceAll(keys().code(key),`\0${keys().color(key)} ${key}\0\x02`);
         }else{
-            src=src.replaceAll(key,`\0${keys.color(key)} ${key}\0`);
+            src=src.replaceAll(keys().code(key),`\0${keys().color(key)} ${key}\0`);
         }
     }
     let st=0;
@@ -95,7 +94,9 @@ function getsrc(code){ //reverse : format
         }
     }
     for(let node of code.childNodes){
-        if(node.nodeName=="#text"){
+        if(node.className=="arrows"){
+            src=src+keys().code(node.innerText);
+        }else if(node.nodeName=="#text"){
             src=src+node.data;
         }else if(node.nodeName=="DIV"){
             if(node==code.firstChild){
@@ -116,24 +117,4 @@ function getsrc(code){ //reverse : format
         }
     }
     return src;
-}
-function view(code,name){
-    if(name.value!=``){
-        code.focus();
-        if(map[name.value]==undefined){
-            map[name.value]=``;
-            let opt=document.createElement("option");
-            opt.value=name.value;
-            name.list.append(opt);
-        }
-        if(name.dataset.last!=``){
-            map[name.dataset.last]=getsrc(code);
-        }
-        code.innerHTML=``;
-        if(map[name.value]==``){
-            initmap(code,false);
-        }else{
-            code.append(format(map[name.value],keys()));
-        }
-    }
 }

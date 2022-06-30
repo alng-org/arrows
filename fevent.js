@@ -1,11 +1,11 @@
-function keydown(keys) {
+function keydown() {
     return (event) => {
-        if (keys.input(event)){
+        if (keys().input(event)){
             event.preventDefault();
         }else{
             if (event.key == "Enter") {
                 event.preventDefault();
-                newline(keys);
+                newline();
             }else if(event.altKey){
                 if(event.key=="s"||event=="S"){
                     reselect(getsel(),true);
@@ -14,11 +14,11 @@ function keydown(keys) {
         }
     };
 }
-function beforeinput(keys) {
+function beforeinput() {
     return (event) => {
         if (/insertText/.test(event.inputType)) {
             event.preventDefault();
-            edit(event.data, keys);
+            edit(event.data);
         } else if (/insertCompositionText/.test(event.inputType)) {
             //PASS
         } else if (/delete/.test(event.inputType)) {
@@ -56,19 +56,19 @@ function compositionstart() {
         forinput("cop");
     };
 }
-function compositionend(keys) {
+function compositionend() {
     return (event) => {
         let rng = getsel();
         rng.selectNode(document.getElementById("cop"));
-        edit(rng.toString(), keys);
+        edit(rng.toString());
     };
 }
-function copy(keys) {
+function copy() {
     return (event) => {
         reselect(getsel());
     };
 }
-function cut(keys) {
+function cut() {
     return (event) => {
         let rng=reselect(getsel());
         if(mingroup(rng.commonAncestorContainer)==null){
@@ -86,13 +86,13 @@ function paste() {
         }
     };
 }
-function input(keys, code) {
+function input() {
     return (event) => {
         if (/insertFromPaste/.test(event.inputType)) {
             let rng = getsel();
             let pst = document.getElementById("pst");
             rng.selectNode(pst);
-            edit(getsrc(pst), keys);
+            edit(getsrc(pst));
         }
     };
 }
