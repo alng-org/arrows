@@ -53,7 +53,9 @@ function keycolor(key,level=0){
     if(keys().isarrow(key)){
         return "red";
     }else{
-        return ["blue","blueviolet","hotpink"][level%3];
+        return ["blue","coral",
+                "darkcyan","dimgray",
+                "hotpink","darkviolet"][level%6];
     }
 }
 function insertpair(pair){

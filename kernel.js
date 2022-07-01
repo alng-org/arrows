@@ -46,7 +46,9 @@ function focusingroup(node){
         if(keys().isarrow(key)){
             return "indianred";
         }else{
-            return ["lightskyblue","mediumpurple","lightpink"][level%3];
+            return ["lightskyblue","lightcoral",
+                    "cadetblue","gray",
+                    "lightpink","violet"][level%6];
         }
     };
     let last=document.getElementsByClassName("group_focus")[0];
