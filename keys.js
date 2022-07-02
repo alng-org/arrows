@@ -39,11 +39,11 @@ function change_keys(keys_map){//keys_map={arrow:arrow_str, left:left_str, right
                            keys_map.left,
                            keys_map.right);
     for(let node of nodes){
-        if(keys().isarrow(node.innerText)){
+        if(keys().isarrow(getsrc(node))){
             node.innerText=new_keys().arrow;
-        }else if(keys().isleft(node.innerText)){
+        }else if(keys().isleft(getsrc(node))){
             node.innerText=new_keys().left;
-        }else if(keys().isright(node.innerText)){
+        }else if(keys().isright(getsrc(node))){
             node.innerText=new_keys().right;
         }
     }
@@ -51,11 +51,18 @@ function change_keys(keys_map){//keys_map={arrow:arrow_str, left:left_str, right
 }
 function keycolor(key,level=0){
     if(keys().isarrow(key)){
-        return "red";
+        if(0<=level&&level<5){
+            return "red";
+        }else{
+            return "indianred";
+        }
     }else{
-        return ["blue","coral",
-                "darkcyan","dimgray",
-                "hotpink","darkviolet"][level%6];
+        if(0<=level&&level<5){
+            return ["blue","coral","darkcyan",
+                    "hotpink","darkviolet"][level];
+        }else{
+            return "dimgray";
+        }
     }
 }
 function insertpair(pair){

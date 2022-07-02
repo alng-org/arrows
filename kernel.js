@@ -20,42 +20,49 @@ function mingroup(node){
     }
     return null;
 }
+function group_level(node,basenode){
+    let level=0;
+    while(node!=basenode){
+        node=node.parentElement;
+        level=level+1;
+        if(node.id=="code"){
+            return -1;
+        }
+    }
+    return level;
+}
+function group_color(level=0){
+    if(0<=level&&level<5){
+        return ["lightskyblue","lightcoral","cadetblue",
+                "lightpink","violet"][level];
+    }else{
+        return "gray";
+    }
+}
+function set_color(container,is_focus,classname,bcolor,scolor,acolor){
+    if(isgroup(container)){
+        container.normalize();
+        container.className=classname;
+        container.style.backgroundColor=bcolor;
+        let level_func={true:(x)=>(x),false:(x)=>(-1)}[is_focus];
+        container.style.color=scolor(level_func(0));
+        let groups=container.getElementsByClassName("group");
+        for(let group of groups){
+            group.style.color=scolor(level_func(group_level(group,container)));
+        }
+        let nodes=container.getElementsByClassName("arrows");
+        for (let node of nodes){
+            node.style.color=acolor(getsrc(node),
+                                    level_func(group_level(node.parentElement,container)));
+        }
+    }
+}
 function focusingroup(node){
-    let fset=(container,classname,bcolor,color,acolor)=>{
-        if(isgroup(container)){
-            container.normalize();
-            container.className=classname;
-            container.style.backgroundColor=bcolor;
-            container.style.color=color;
-            let nodes=container.getElementsByClassName("arrows");
-            let flevel=(node)=>{
-                node=node.parentElement;
-                let level=0;
-                while(node.id!="init"){
-                    level=level+1;
-                    node=node.parentElement;
-                }
-                return level;
-            };
-            for (let node of nodes){
-                node.style.color=acolor(node.innerText,flevel(node));
-            }
-        }
-    };
-    let acolor=(key,level=0)=>{
-        if(keys().isarrow(key)){
-            return "indianred";
-        }else{
-            return ["lightskyblue","lightcoral",
-                    "cadetblue","gray",
-                    "lightpink","violet"][level%6];
-        }
-    };
     let last=document.getElementsByClassName("group_focus")[0];
     if(last!=node){
-        fset(last,"group","","",acolor);
+        set_color(last,false,"group","",group_color,keys().color);
     }
-    fset(node,"group_focus","khaki","green",keys().color);
+    set_color(node,true,"group_focus","khaki",group_color,keys().color);
 }
 function format(src){
     for(let key of keys().list){
@@ -97,7 +104,7 @@ function getsrc(code){ //reverse : format
     }
     for(let node of code.childNodes){
         if(node.className=="arrows"){
-            src=src+keys().code(node.innerText);
+            src=src+keys().code(getsrc(node));
         }else if(node.nodeName=="#text"){
             src=src+node.data;
         }else if(node.nodeName=="DIV"){
