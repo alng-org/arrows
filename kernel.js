@@ -57,8 +57,23 @@ function set_color(container,is_focus,classname,bcolor,scolor,acolor){
         }
     }
 }
+function img_show(rng){
+    let src=getsrc(rng.cloneContents());
+    let img=format(getsrc(tonode(`<img src="${src}">`))).childNodes[0];
+    img.decode().then(()=>{
+        rng.deleteContents();
+        rng.insertNode(img);
+        rng.collapse(false);
+    }).catch((err)=>{
+        rng.deleteContents();
+        alert(err);
+    });
+}
 function focusingroup(node){
     let last=document.getElementsByClassName("group_focus")[0];
+    if(last==undefined){
+        last=document.getElementById("init");
+    }
     if(last!=node){
         set_color(last,false,"group","",group_color,keys().color);
     }
@@ -88,7 +103,14 @@ function format(src){
     if(st==0){
         src=fhtml(src).replace(/\0(.*?) (.*?)\0/g,`<span class="arrows" style="font-family:math;color:$1;">$2</span>`)
                       .replace(/\x01/g,`<span class="group">`)
-                      .replace(/\x02/g,`</span>`);
+                      .replace(/\x02/g,`</span>`)
+                      .replace(/\x03(.*?)\x03/g,`<img src="$1"
+                                                      onclick="if(this.style.height==''){
+                                                                    this.style.height='1em';
+                                                               }else{
+                                                                    this.style.height='';
+                                                               }"
+                                                      style="height:1em;/*margin-left:0.1em;*/margin-right:0.1em">`);
         return tonode(src);
     }else{
         alert("grammer error!");
@@ -118,12 +140,11 @@ function getsrc(code){ //reverse : format
             }
         }else if(node.nodeName=="BR"&&node.nextSibling!=null){
             src=src+"\n";
-        }/*else if(node.nodeName=="IMG"||
-                (isgroup(node))){
-            src=src+`\0\x01${node.outerHTML}\0`;
-        }*/else{
+        }else if(node.nodeName=="IMG"){
+            src=src+`\x03${node.src}\x03`;
+        }else{
             src=src+getsrc(node);
         }
     }
-    return src;
+        return src;
 }

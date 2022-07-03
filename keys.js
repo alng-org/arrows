@@ -25,6 +25,8 @@ function meta_keys(_arrow=undefined,_left=undefined,_right=undefined){
                     isright:(key)=>(key==_right),
                     arrow_code:`\0${_arrow}\0`,
                     pair_code:`\0${_left}\0\0${_right}\0`,
+                    left_code:`\0${_left}\0`,
+                    right_code:`\0${_right}\0`,
                     code:(key)=>(`\0${key}\0`),
                     color:keycolor,
                     input:keymap};

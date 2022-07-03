@@ -2,15 +2,19 @@ function keydown() {
     return (event) => {
         if (keys().input(event)){
             event.preventDefault();
-        }else{
-            if (event.key == "Enter") {
+        }else if(event.ctrlKey){
+
+            if(event.key=="s"||event.key=="S"){
+                reselect(getsel(),true);
+            }else if(event.key=="i"||event.key=="I"){
                 event.preventDefault();
-                newline();
-            }else if(event.altKey){
-                if(event.key=="s"||event=="S"){
-                    reselect(getsel(),true);
-                }
+                let node=reselect(getsel());
+                img_show(node);
             }
+
+        }else if (event.key=="Enter"){
+            event.preventDefault();
+            edit("\n");
         }
     };
 }
