@@ -1,15 +1,32 @@
+let CTRL=false;
 function keydown() {
     return (event) => {
         if (keys().input(event)){
             event.preventDefault();
-        }else if(event.ctrlKey){
+        }else if(event.ctrlKey||CTRL){
+            if(event.key=="m"||event.key=="M"){
+                event.preventDefault();
+                let rng=getsel().cloneRange();
+                rng=select_text(rng,true);
+                if(rng==undefined){
+                    reselect(getsel(),true);
+                }else{
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(rng);
+                }
 
-            if(event.key=="s"||event.key=="S"){
-                reselect(getsel(),true);
             }else if(event.key=="i"||event.key=="I"){
                 event.preventDefault();
-                let node=reselect(getsel());
-                img_show(node);
+                let rng=select_text(getsel());
+                if(rng!=undefined){
+                    img_show(rng);
+                }
+            }else if(event.key=="g"||event.key=="G"){
+                event.preventDefault();
+                let rng=select_text(getsel());
+                if(rng!=undefined){
+                    window.open(getsrc(rng.cloneContents()),"target");
+                }
             }
 
         }else if (event.key=="Enter"){

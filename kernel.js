@@ -41,10 +41,17 @@ function group_color(level=0){
 }
 function set_color(container,is_focus,classname,bcolor,scolor,acolor){
     if(isgroup(container)){
-        container.normalize();
         container.className=classname;
         container.style.backgroundColor=bcolor;
-        let level_func={true:(x)=>(x),false:(x)=>(-1)}[is_focus];
+        let level=group_level(container,document.getElementById("init"));
+        let level_func={false:(x)=>(-1),
+                        true:(x)=>{
+                            if(0<=x&&x<5){
+                                return (x+level)%5;
+                            }else{
+                                return x;
+                            }
+                        }}[is_focus];
         container.style.color=scolor(level_func(0));
         let groups=container.getElementsByClassName("group");
         for(let group of groups){

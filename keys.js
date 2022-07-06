@@ -58,12 +58,18 @@ function keycolor(key,level=0){
         }else{
             return "indianred";
         }
-    }else{
+    }else if(keys().isleft(key)||keys().isright(key)){
         if(0<=level&&level<5){
             return ["blue","coral","darkcyan",
                     "hotpink","darkviolet"][level];
         }else{
             return "dimgray";
+        }
+    }else{
+        if(0<=level&&level<5){
+            return "hotpink";
+        }else{
+            return "pink";
         }
     }
 }
@@ -189,7 +195,7 @@ function initmap(code,first=true){
             </button>`);
         let _htmls=[_f("left",keys().left,`(Alt+L)`,"0%","33.33%"),
                     _f("arrow",keys().arrow,`(Alt+A)`,"33.33%","33.33%"),
-                    _f("right",keys().right,`(Alt+R)`,"66.66%","33.33%")];
+                    _f("right",keys().right,`(Alt+R)`,"66.66%","33.33%"),];
         let _html=_htmls.reduce((x,y)=>(x+y));
         document.body.append(tonode(_html));
     }
