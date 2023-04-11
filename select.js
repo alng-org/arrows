@@ -6,7 +6,7 @@ function common_min_asone(range,fasone=isgroup){
         }
     return common;
 }
-function reselect(rng,forced_extend=false){
+function reselect(rng=getsel(),forced_extend=false){
     let reset=(p)=>{
         if(p.n.id=="code"){ //do not combine with [if(p.n==p.c)]
             return {s:(rng)=>false,

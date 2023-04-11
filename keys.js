@@ -1,4 +1,4 @@
-function meta_keys(_arrow=undefined,_left=undefined,_right=undefined){
+function meta_keys(_arrow=undefined,_left=undefined,_right=undefined,_quote=undefined){
     if(_arrow==undefined){
         _arrow=keys().arrow;
     }
@@ -8,11 +8,15 @@ function meta_keys(_arrow=undefined,_left=undefined,_right=undefined){
     if(_right==undefined){
         _right=keys().right;
     }
+    if(_quote==undefined){
+        _quote=keys().quote;
+    }
     let keys_set=new Set();
     keys_set.add(_arrow);
     keys_set.add(_left);
     keys_set.add(_right);
-    if(keys_set.size<3){
+    keys_set.add(_quote);
+    if(keys_set.size<4){
         return keys;
     }else{
         return ()=>{
@@ -20,26 +24,33 @@ function meta_keys(_arrow=undefined,_left=undefined,_right=undefined){
                     arrow:_arrow,
                     left:_left,
                     right:_right,
+                    quote:_quote,
+                    pair:`${_left}${_right}`,
                     isarrow:(key)=>(key==_arrow),
                     isleft:(key)=>(key==_left),
                     isright:(key)=>(key==_right),
-                    arrow_code:`\0${_arrow}\0`,
-                    pair_code:`\0${_left}\0\0${_right}\0`,
-                    left_code:`\0${_left}\0`,
-                    right_code:`\0${_right}\0`,
-                    code:(key)=>(`\0${key}\0`),
-                    color:keycolor,
+                    isquote:(key)=>(key==_quote),
+                    arrow_code:`\0${_arrow} \0`,
+                    pair_code:`\0${_left} \0\0${_right} \0`,
+                    left_code:`\0${_left} \0`,
+                    right_code:`\0${_right} \0`,
+                    quote_code:`\0${_quote} \0`,
+                    code:(key)=>(`\0${key} \0`),
+                    color:key_color,
+                    level:color_level,
                     input:keymap};
         }
     }
 }
-let default_keys=meta_keys(`→`,`›`,`‑`);
+let default_keys=meta_keys(`→`,`ˈ`,`ˌ`,`ƒ`/*`(`,`)`*/);//\u200b zero width space
+//let default_keys=meta_keys(`→`,`›`,`‑`);
 let keys=default_keys;
 function change_keys(keys_map){//keys_map={arrow:arrow_str, left:left_str, right:right_str} You can just give what you need to change
     let nodes=document.getElementsByClassName("arrows");
     let new_keys=meta_keys(keys_map.arrow,
                            keys_map.left,
-                           keys_map.right);
+                           keys_map.right,
+                           keys_map.quote);
     for(let node of nodes){
         if(keys().isarrow(getsrc(node))){
             node.innerText=new_keys().arrow;
@@ -47,31 +58,24 @@ function change_keys(keys_map){//keys_map={arrow:arrow_str, left:left_str, right
             node.innerText=new_keys().left;
         }else if(keys().isright(getsrc(node))){
             node.innerText=new_keys().right;
+        }else if(keys().isquote(getsrc(node))){
+            node.innerText=new_keys().quote;
         }
     }
     keys=new_keys;
 }
-function keycolor(key,level=0){
+function key_color(key,level=0){
     if(keys().isarrow(key)){
-        if(0<=level&&level<5){
-            return "red";
-        }else{
-            return "indianred";
-        }
-    }else if(keys().isleft(key)||keys().isright(key)){
-        if(0<=level&&level<5){
-            return ["blue","coral","darkcyan",
-                    "hotpink","darkviolet"][level];
-        }else{
-            return "dimgray";
-        }
+        return "red";
+    }else if(keys().isquote(key)){
+        return "red";
     }else{
-        if(0<=level&&level<5){
-            return "hotpink";
-        }else{
-            return "pink";
-        }
+        return ["coral","hotpink","darkviolet"][level%3];
     }
+}
+function color_level(color){
+    let colors=["coral","hotpink","darkviolet"];
+    return colors.indexOf(color);
 }
 function insertpair(pair){
     let rng=reselect(getsel());
@@ -105,6 +109,9 @@ function keymap(event = null) {
             return true;
         }else if(/Enter/.test(event.key)){
             insertpair(keys().pair_code);
+            return true;
+        }else if(/^(F|f)$/.test(event.key)){
+            edit(keys().quote_code);
             return true;
         }else if(/Home/.test(event.key)){
             beforepair(getsel());
@@ -156,20 +163,23 @@ function initmap(code,first=true){
                                                 ${text}
                                                 </button>`);
         let transform=(src)=>{
-            return src.replace(/\0(.*?)\0/g,`<span class="arrows" style="color:gold;">$1</span>`);
+            return `<span class="arrows" style="color:gold;">${src}</span>`;
         };
         let htmls=[f(`${code_focus};edit(keys().arrow_code)`,
-                     transform(keys().arrow_code),`(Alt+→)`,
-                     "25%","25%"),
+                     transform(keys().arrow),`(Alt+→)`,
+                     "20%","20%"),
                    f(`${code_focus};insertpair(keys().pair_code)`,
-                     transform(keys().pair_code),`(Alt+Enter)`,
-                     "50%","25%"),
+                     transform(keys().pair),`(Alt+Enter)`,
+                     "40%","20%"),
+                   f(`${code_focus};edit(keys().quote_code)`,
+                     transform(keys().quote),`(Alt+F)`,
+                     "60%","20%"),
                     f(`${code_focus};beforepair(getsel())`,
                       ``,`<< (Alt+Home)`,
-                      "0%","25%"),
+                      "0%","20%"),
                       f(`${code_focus};afterpair(getsel())`,
                         ``,`>> (Alt+End)`,
-                        "75%","25%")];
+                        "80%","20%")];
         let html=htmls.reduce((x,y)=>(x+y));
         document.body.append(tonode(html));
         //=====

@@ -2,8 +2,10 @@ function edit(str){
     range=getsel();
     range=reselect(range);
     range.deleteContents();
-    if(mingroup(range.commonAncestorContainer)!=null){
-        range.insertNode(format(str));
+    let gp=mingroup(range.commonAncestorContainer);
+    if(gp!=null){
+        let base_level=keys().level(gp.childNodes[0].style.color);
+        range.insertNode(format(str,base_level));
     }
     //let rng=range.cloneRange();
     range.collapse(false);
