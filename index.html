@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <script src="edit.js"></script>
+    <title>a Language</title>
+    <link rel="icon" href="favicon.ico"/>
+    <style>
+        .arrow{
+            background-clip: text;
+            -webkit-background-clip: text;
+            color:transparent;
+            animation-name: arrow_animi;
+            animation-duration: 3s;
+            animation-iteration-count: infinite;
+            /*animation-direction: alternate;*/
+        }
+        @keyframes arrow_animi {
+            /*See it at function init*/
+        }
+        .quote_0{
+            color: yellow;
+        }
+        .quote_1{
+            color: pink;
+        }
+        .quote_2{
+            color: skyblue;
+        }
+        .quote_unpair{
+            color: darkred;
+        }
+        .quote_current_pair{
+            background-color: gray;
+        }
+    </style>
+</head>
+<body onload="init(document.getElementById('code'))"
+      style="background-color:black">
+    <div id="code" contenteditable="true" 
+                   style="font-family:math;
+                          font-size:5.0em;
+                          font-weight:bold;
+                          background-color:black;
+                          color:darkcyan;caret-color: aquamarine;
+                          outline:none;
+                          position:fixed;
+                          left:0%;top:0%;
+                          width:100%;height:100%;
+                          overflow:scroll;white-space:pre;"><br class="Not_Text"></div>
+</body>
