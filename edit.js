@@ -71,7 +71,7 @@ function current_pair(sel){
             return con;
         }else{
             let tmp = con.childNodes[ofs];
-            return  ( tmp == undefined ) ? null : tmp; //Although in Line 75, e != null will be false where e == undefined
+            return  ( tmp == undefined ) ? null : tmp; //Although in below, e != null will be false where e == undefined
         }
     }
     let search_quote=(init_con,next,level,target_level)=>{
@@ -98,25 +98,39 @@ function current_pair(sel){
     };
     let mark=(sel,container,offset,next,
               target_level,class_name,
-              init_level)=>{
-        let con=fcon(container(sel),offset(sel));
+              init_level,
+              default_offset)=>{
+        let con = fcon(container(sel),offset(sel));
+        let root=(con == null)? null : con.parentNode;
         con=search_quote(con,next,init_level,target_level);
         if(con != null){
             con.classList.add(class_name);
         }else{
-            //PASS
+            con=(root == null)? null : root.childNodes[default_offset(root)];
+                // default_offset (container -> offset) is used for returning a default con (contanier) to set sel
+                // in the returned lambda func of func current_pair
+                // See it at below, before return expr
         }
         return con;
     };
     let unpair=pair(sel.cloneContents());
-    //NOTICE Offset need to discuss (www)w ERROR
-    mark(sel,(s)=>s.startContainer,(s)=>s.startOffset-1,(s)=>s.previousSibling,
+    let start=mark(sel,(s)=>s.startContainer,(s)=>s.startOffset-1,(s)=>s.previousSibling,
          1,`quote_current_pair`,
-         unpair.reduce((x,y)=>x + ( ( y == `)` ) ? -1 : 0 ) , 0));
-    mark(sel,(s)=>s.endContainer,(s)=>s.endOffset,(s)=>s.nextSibling,
+         unpair.reduce((x,y)=>x + ( ( y == `)` ) ? -1 : 0 ) , 0),
+         (r)=>0);
+    let end=mark(sel,(s)=>s.endContainer,(s)=>s.endOffset,(s)=>s.nextSibling,
          -1,`quote_current_pair`,
-         unpair.reduce((x,y)=>x + ( ( y == `(` ) ? 1 : 0 ) , 0));
-    return;
+         unpair.reduce((x,y)=>x + ( ( y == `(` ) ? 1 : 0 ) , 0),
+         (r)=>r.childNodes.length-1);
+    return (sel)=>{
+        if(start != null && end != null){
+            sel.setStartBefore(start);
+            sel.setEndAfter(end);
+            return true;
+        }else{
+            return false;
+        }
+    };
 }
 function resel(sel){
     let move=(sel,container,offset,
@@ -173,13 +187,12 @@ function keydown(event) {
             after_edit();
         }else{
             edit(`\n`);
-            return;
-            let sel=resel(getsel());
-            if(sel.startContainer.childNodes.length == sel.startOffset){
-                edit(`\n`);
-                sel.selectNode(sel.startContainer.childNodes[sel.startOffset-1]);
-            }
         }
+    }else if((event.ctrlKey || event.altKey) && /Q|q/.test(event.key)){
+        event.preventDefault();
+        let sel=getsel();
+        let fsel=current_pair(sel);
+        fsel(sel);
     }else{
         /*PASS*/
     }
@@ -232,7 +245,7 @@ function paste(event) {
     edit(event.clipboardData.getData("text/plain"));
 }
 function selectionchange(event){
-    //console.log(event);
+    //console.log(event);   
     current_pair(getsel());
 }
 function init(code){
@@ -248,11 +261,11 @@ function init(code){
     code.addEventListener("cut", cut());
     code.addEventListener("paste", paste);
     document.addEventListener("selectionchange",selectionchange); // selectionchange is base on document specialy
-    let key_frame=document.styleSheets[0].cssRules[1];
-    for(let i=0;i<=100;i=i+0.5){
+    let key_frame=document.styleSheets[0].cssRules[1]; //@key_frame arrow_animi
+    for(let i=0;i<=100;i=i+1){
         key_frame.appendRule(`
         ${i}% {
-            background-image:linear-gradient(to right,red,yellow ${i}%,red);
+            background-image:linear-gradient(to right,orange ${i-100}%,red,orange ${i}%,red,orange ${i+100}%);
         }`);
     }
     edit(`Alt+Enter to input () \nAlt or Ctrl + RightArrow to input →`);
