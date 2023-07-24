@@ -261,6 +261,7 @@ function init(code){
     code.addEventListener("cut", cut());
     code.addEventListener("paste", paste);
     document.addEventListener("selectionchange",selectionchange); // selectionchange is base on document specialy
+    //==============
     let key_frame=document.styleSheets[0].cssRules[1]; //@key_frame arrow_animi
     for(let i=0;i<=100;i=i+1){
         key_frame.appendRule(`
