@@ -170,7 +170,7 @@ function edit(str){
     after_edit();
 }
 function keydown(event) {
-    if((event.ctrlKey || event.altKey) && /(Arrow)?Right/.test(event.key)){
+    if((event.ctrlKey || event.altKey || event.shiftKey) && /(Arrow)?Right/.test(event.key)){
         event.preventDefault();
         edit(`→`);
     }else if(/Enter/.test(event.key)){
@@ -269,5 +269,5 @@ function init(code){
             background-image:linear-gradient(to right,orange ${i-100}%,red,orange ${i}%,red,orange ${i+100}%);
         }`);
     }
-    edit(`Alt+Enter to input () \nAlt or Ctrl + RightArrow to input →`);
+    edit(`Alt+Enter to input () \nAlt or Ctrl or Shift + RightArrow to input →`);
 }
