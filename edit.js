@@ -175,7 +175,7 @@ function keydown(event) {
         edit(`→`);
     }else if(/Enter/.test(event.key)){
         event.preventDefault();
-        if(event.ctrlKey || event.altKey){
+        if(event.ctrlKey || event.altKey || event.shiftKey){
             let sel=resel(getsel());
             let ct=sel.cloneContents();
             edit(`()`);
@@ -269,5 +269,5 @@ function init(code){
             background-image:linear-gradient(to right,orange ${i-100}%,red,orange ${i}%,red,orange ${i+100}%);
         }`);
     }
-    edit(`Alt+Enter to input () \nAlt or Ctrl or Shift + RightArrow to input →`);
+    edit(`Alt or Ctrl or Shift + Enter to input () \nAlt or Ctrl or Shift + RightArrow to input →`);
 }
