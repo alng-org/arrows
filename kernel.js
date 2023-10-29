@@ -20,7 +20,7 @@ class map{
                     break;
                 case `(`:
                 default:
-                    yield* gen_base(atom,[atom]);
+                    yield* gen_base(atom,atom/*[atom]*/);
             }
             switch(atom){ //fallthough is right
                 case `→`:
@@ -50,44 +50,64 @@ class map{
             if(typeof(v) === typeof("")){
                 s=s.concat(v);
             }else{
-                s=s.concat(`(${v.toString()})`);
+                s=s.concat(v.toString());
             }
         }
-        return s;
+        return `(${s})`;
     }
     valueOf(){
         return this.toString();
     }
-    static #group(list){
+
+
+    #pop(){
+        return this.#map.pop();
+    }
+    #push(val){
+        this.#map.push(val);
+        return this;
+    }
+    #empty(){
+        this.#map=[];
+        return this;
+    }
+    #last(){
+        return this.#map[this.#map.length-1];
+    }
+    static #fgroup(gen){
+        let x=gen.next();
         let v=new map(null);
-        v.#map=list;
+        while(x.done === false){
+            switch(x.value){
+                case '(':
+                    v.#push(map.#fgroup(gen));
+                    gen=v.#last().#pop(); // it's not need to do so...
+                    break;
+                case ')':
+                    v.#push(gen);
+                    return v;
+                default:
+                    v.#push(x.value);
+            }
+            x=gen.next();
+        }
+        v.#empty();
+        v.#push(gen);
         return v;
     }
     constructor(src){
-        let st=[];
-        if(typeof(src) === typeof("")){
-            for(let atom of map.#gen_atom(src)){
-                if(typeof(atom) == typeof([])){
-                    atom=atom[0];
-                    this.#map.push(null);
-                }
-                switch(atom){
-                    case '(':
-                        st.push(this.#map);
-                        this.#map=[];
-                        break;
-                    case ')':
-                        let par=st.pop();
-                        par.push(map.#group(this.#map));
-                        this.#map=par;
-                        break;
-                    default:
-                        this.#map.push(atom);
-                }
+        if(typeof(src) === typeof(``) && src[0] === `(`){
+            let gen=map.#gen_atom(src);
+            gen.next();
+            let v=map.#fgroup(gen);
+            gen=v.#pop();
+            if(gen.next().done === true){
+                this.#map=v.#map;
+            }else{
+                this.#map=[];
             }
-            return this;
         }else{
-            return this;
+            this.#map=[];
         }
     }
 }
