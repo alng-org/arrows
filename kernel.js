@@ -33,12 +33,25 @@ class map{
             }
         }
     }
+    static #unwrap(val){
+        if(val instanceof map){
+            if(val.#map.length === 1 && val.#map[0] instanceof map){
+                return map.#unwrap(val.#map[0]);
+            }else if(val.#map.length === 1 && typeof(val.#map[0]) === typeof(``)){
+                return val.#map[0];
+            }else{
+                return val;
+            }
+        }else{
+            return val;
+        }
+    }
     *[Symbol.iterator](){
         for(let i=0;i<this.#map.length-1;i=i+1){
-            yield this.#map[i];
+            yield map.#unwrap(this.#map[i]);
         }
         let v=this.#map[this.#map.length-1];
-        if(typeof(v) === typeof(new map(null))){
+        if(v instanceof map){
             yield* v[Symbol.iterator]();
         }else{
             yield v;
