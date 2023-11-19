@@ -57,6 +57,17 @@ class map{
             yield v;
         }
     }
+    uni_quote(){ //a deep copy of this
+        let v=new map(null);
+        for(let i of this){
+            if(typeof(i) === typeof(``)){
+                v.#push(i);
+            }else{
+                v.#push(i.uni_quote());
+            }
+        }
+        return v;
+    }
     toString(){
         let s="";
         for(let v of this.#map){
@@ -71,8 +82,6 @@ class map{
     valueOf(){
         return this.toString();
     }
-
-
     #pop(){
         return this.#map.pop();
     }
@@ -122,5 +131,20 @@ class map{
         }else{
             this.#map=[];
         }
+    }
+    #apply(dict){
+        let v=new map(null);
+        for(let x of this){
+            if(typeof(x) === typeof(``)){
+                if(Object.hasOwn(dict,x) === true){
+                    v.#push(dict[x]);
+                }else{
+                    v.#push(x);
+                }
+            }else{
+                v.#push(x.#apply(dict));
+            }
+        }
+        return v;
     }
 }
