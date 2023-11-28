@@ -193,6 +193,9 @@ function keydown(event) {
         let sel=getsel();
         let fsel=current_pair(sel);
         fsel(sel);
+    }else if(/Tab/.test(event.key)){
+        event.preventDefault();
+        edit(`\t`);
     }else{
         /*PASS*/
     }

@@ -57,7 +57,7 @@ class map{
             yield v;
         }
     }
-    uni_quote(){ //a deep copy of this
+    uni_quote(){ //a deep copy of this with remove addtional quote
         let v=new map(null);
         for(let i of this){
             if(typeof(i) === typeof(``)){
