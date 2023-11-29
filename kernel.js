@@ -1,12 +1,13 @@
 class map{
     #map=[];
     static *#gen_atom(src){
-        let text_req=true;
-        let gen_base= function*(atom,err=null){
-            if(text_req == true){
+        let expr_req=true;
+        let gen_base= function*(atom,pre_atom=null){
+            if(expr_req == true){
                 yield atom;
-            }else if(err !== null){
-                yield err;
+            }else if(pre_atom !== null){
+                yield pre_atom;
+                yield atom;
             }else{
                 //PASS
             }
@@ -20,16 +21,16 @@ class map{
                     break;
                 case `(`:
                 default:
-                    yield* gen_base(atom,atom/*[atom]*/);
+                    yield* gen_base(atom,[`→`]);
             }
             switch(atom){ //fallthough is right
                 case `→`:
                 case `(`:
-                    text_req=true;
+                    expr_req=true;
                     break;
                 case `)`:
                 default:
-                    text_req=false;
+                    expr_req=false;
             }
         }
     }
@@ -73,8 +74,10 @@ class map{
         for(let v of this.#map){
             if(typeof(v) === typeof("")){
                 s=s.concat(v);
-            }else{
+            }else if(v instanceof map){
                 s=s.concat(v.toString());
+            }else{
+                //PASS
             }
         }
         return `(${s})`;
@@ -96,7 +99,7 @@ class map{
     #last(){
         return this.#map[this.#map.length-1];
     }
-    static #fgroup(gen){
+    static #fgroup(gen){ //TODO: need to redesign
         let x=gen.next();
         let v=new map(null);
         while(x.done === false){
