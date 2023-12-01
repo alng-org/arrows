@@ -34,11 +34,26 @@ class map{
             }
         }
     }
+    static type(val){
+        //This need to test
+        if((type(val) === type(new map()) 
+                && val.#length() === 1 
+                && type(val.#at(0)) === type(``))
+           || (type(val) === type(``) && val !== `→` )
+           || (type(val) === type([])) && val.length === 2){
+            return `v`;
+        }else if((type(val) === type(``) && val === `→` )
+                  || (type(val) === type([])) && val.length === 1){
+            return `→`;
+        }else{
+            return `e`;
+        }
+    }
     static #unwrap(val){
-        if(type(val) === type(new map(null))){
-            if(val.#length() === 1 && type(val.#at(0)) === type(new map(null))){
+        if(type(val) === type(new map())){
+            if(val.#length() === 1 && type(val.#at(0)) === type(new map())){
                 return map.#unwrap(val.#at(0));
-            }else if(val.#length() === 1 && type(val.#at(0)) === type(``)){
+            }else if(val.#length() === 1 && type(val.#at(0)) === type(``) && val.#at(0) !== ``){
                 return val.#at(0);
             }else{
                 return val;
@@ -47,24 +62,30 @@ class map{
             return val;
         }
     }
+    static unwarp(v){
+        return map.#unwrap(v);
+    }
     *[Symbol.iterator](){
         for(let i=0;i<this.#length()-1;i=i+1){
             yield map.#unwrap(this.#at(i));
         }
         let v=this.#at(-1);
-        if(type(v) === type(new map(null))){
+        if(type(v) === type(new map())){
             yield* v[Symbol.iterator]();
         }else{
             yield v;
         }
     }
     uni_quote(){ //a deep copy of this with remove addtional quote
-        let v=new map(null);
+        let v=new map();
         for(let i of this){
             if(type(i) === type(``)){
                 v.#push(i);
-            }else{
+            }else if(type(i) === type(new map())){
                 v.#push(i.uni_quote());
+            }else if(type(i) === type([]) && i.length === 2){
+                v.#push([map.#unwrap(i[0]),
+                         i[1].uni_quote()]);
             }
         }
         return v;
@@ -74,7 +95,7 @@ class map{
         for(let v of this.#map){
             if(type(v) === type(``)){
                 s=s.concat(v);
-            }else if(type(v) === type(new map(null))){
+            }else if(type(v) === type(new map())){
                 s=s.concat(v.toString());
             }else if(type(v) === type([]) && v.length === 2){
                 s=s.concat(v[0]).concat(v[1].toString());
@@ -123,13 +144,14 @@ class map{
     }
     static #fgroup(gen){
         let x=gen.next();
-        let v=new map(null);
+        let v=new map();
         while(x.done === false){
             switch(x.value){
                 case '(':
                     v.#push(map.#fgroup(gen));
                     gen=v.#last().#pop(); // it's not need to do so...
-                    if(type(v.#at(-3)) === type(``)
+                    if(type(map.#unwrap(v.#at(-3))) === type(``)
+                    //HERE need to check:map.#unwrap
                     && map.#farrow(v.#at(-2)) === `[→]`){
                         let val=v.#pop();
                         v.#pop();
@@ -166,7 +188,7 @@ class map{
         }
     }
     #apply(dict){
-        let v=new map(null);
+        let v=new map();
         for(let x of this){
             if(type(x) === type(``)){
                 if(Object.hasOwn(dict,x) === true){
