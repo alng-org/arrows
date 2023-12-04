@@ -16,12 +16,13 @@ class map{
             switch(atom){ //fallthough is right
                 case `→`:
                 case `)`:
-                    yield* gen_base(``);
-                    yield atom;
+                    yield* gen_base(map.#farrow([``]));
+                    yield map.#farrow(atom);
                     break;
                 case `(`:
                 default:
-                    yield* gen_base(atom,[`→`]);
+                    let fv=(x)=>(x === `(`) ? x : [x];
+                    yield* gen_base(fv(map.#farrow(atom)),map.#farrow(`[→]`));
             }
             switch(atom){ //fallthough is right
                 case `→`:
@@ -34,29 +35,34 @@ class map{
             }
         }
     }
-    static type(val){
+    static #type(val,real=true){
         //This need to test
-        if((type(val) === type(new map()) 
-                && val.#length() === 1 
-                && type(val.#at(0)) === type(``))
-           || (type(val) === type(``) && val !== `→` )
-           || (type(val) === type([])) && val.length === 2){
-            return `v`;
-        }else if((type(val) === type(``) && val === `→` )
-                  || (type(val) === type([])) && val.length === 1){
+        if(type(val) === type(Symbol.for(``))){
             return `→`;
+        }else if(type(val) === type([])){
+            return `v`;
+        }else if(type(val) !== type(new map())){
+            return null;
+        }else if(val.#length() === 1){
+            return (real === true) ? map.#type(val.#at(0)) : `?`;
         }else{
             return `e`;
         }
     }
     static #unwrap(val){
-        if(type(val) === type(new map())){
-            if(val.#length() === 1 && type(val.#at(0)) === type(new map())){
-                return map.#unwrap(val.#at(0));
-            }else if(val.#length() === 1 && type(val.#at(0)) === type(``) && val.#at(0) !== ``){
-                return val.#at(0);
-            }else{
-                return val;
+        if(map.#type(val,false) === `?`){
+            let inner=val.#at(0);
+            switch(map.#type(inner,false)){
+                case `?`:
+                    return map.#unwrap(inner);
+                case `v`:
+                    if(inner[0] !== ``){
+                        return inner;
+                    }else{
+                        //fall though
+                    }
+                default:
+                    return val;
             }
         }else{
             return val;
@@ -64,6 +70,9 @@ class map{
     }
     static unwarp(v){
         return map.#unwrap(v);
+    }
+    static type(v){
+        return map.#type(v);
     }
     *[Symbol.iterator](){
         for(let i=0;i<this.#length()-1;i=i+1){
@@ -91,18 +100,18 @@ class map{
         return v;
     }
     toString(){
-        let s="";
-        for(let v of this.#map){
-            if(type(v) === type(``)){
-                s=s.concat(v);
-            }else if(type(v) === type(new map())){
-                s=s.concat(v.toString());
-            }else if(type(v) === type([]) && v.length === 2){
-                s=s.concat(v[0]).concat(v[1].toString());
-            }else{
-                //PASS
+        let feach=(val)=>{
+            switch(map.#type(val,false)){
+                case `→`:
+                    return ((x)=>(x === `→`) ? x : ``)(map.#farrow(val));
+                case `v`:
+                    return val.map((v)=>v.toString()).join(``);
+                default:
+                    return val.toString();
             }
         }
+        let s="";
+        s=this.#map.map(feach).join(``);
         return `(${s})`;
     }
     valueOf(){
@@ -136,10 +145,17 @@ class map{
         return this.#at(-1);
     }
     static #farrow(arrow){
-        if(type(arrow) === type(``)){
-            return `→`;
-        }else{
-            return `[→]`;
+        switch(arrow){
+            case `→`:
+                return Symbol.for(`→`);
+            case `[→]`:
+                return Symbol.for(`[→]`);
+            case Symbol.for(`→`):
+                return `→`;
+            case Symbol.for(`[→]`):
+                return `[→]`;
+            default:
+                return arrow;
         }
     }
     static #fgroup(gen){
@@ -150,12 +166,14 @@ class map{
                 case '(':
                     v.#push(map.#fgroup(gen));
                     gen=v.#last().#pop(); // it's not need to do so...
-                    if(type(map.#unwrap(v.#at(-3))) === type(``)
-                    //HERE need to check:map.#unwrap
+                    if(map.#type(v.#at(-3)) === `v`
+                    && ((x)=>(x?.length === 1)
+                          || (type(x) === type(new map()) && x.#at(0)?.length === 1)
+                       )(map.#unwrap(v.#at(-3)))
                     && map.#farrow(v.#at(-2)) === `[→]`){
                         let val=v.#pop();
                         v.#pop();
-                        v.#push([v.#pop(),val]);
+                       v.#push([v.#pop(),val]);
                     }else{
                         //PASS
                     }
