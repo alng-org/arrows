@@ -22,7 +22,7 @@ class map{
                 case `(`:
                 default:
                     let fv=(x)=>(x === `(`) ? x : [x];
-                    yield* gen_base(fv(map.#farrow(atom)),map.#farrow(`[→]`));
+                    yield* gen_base(map.#farrow(fv(atom)),map.#farrow(`[→]`));
             }
             switch(atom){ //fallthough is right
                 case `→`:
@@ -70,16 +70,18 @@ class map{
             return val;
         }
     }
-    static #bindable(v){
+    static #getv(v){
         let x=map.#unwrap(v,true);
-        if(map.#type(v) === `v` && x.length === 1){
-            return  x[0];
-        }else{
+        if(map.#type(x) !==`v`){
             return null;
+        }else if(x.length === 1){
+            return x[0];
+        }else{
+            return map.#getv(x[0]);
         }
     }
     static #bind(v,val){
-        if(map.#bindable(v) !== null){
+        if(map.#getv(v) !== null){
             return  [v,val];
         }else{
             return v;
@@ -87,7 +89,7 @@ class map{
     }
     #apply(dict){
         let each=(v)=>{
-            let key=map.#bindable(v);
+            let key=map.#getv(v);
             if(key !== null && Object.hasOwn(dict,key) === true){
                 return map.#bind(v,dict[key]);
             }else if([`→`,`v`].includes(map.#type(v)) === true){
@@ -117,26 +119,39 @@ class map{
     static #fgroup(gen){
         let x=gen.next();
         let v=new map();
+        let fbind=()=>fbind; // fbind just a const address of variable fbind
         while(x.done === false){
             switch(x.value){
-                case '(':
+                case map.#farrow(`(`):
                     v.#push(map.#fgroup(gen));
                     gen=v.#last().#pop(); // it's not need to do so...
-                    if(map.#bindable(v.#at(-3)) !== null 
+                   /* if(map.#bindable(v.#at(-3)) !== null 
                     && map.#farrow(v.#at(-2)) === `[→]`){
                         let val=v.#pop();
                         v.#pop();
                        v.#push(map.#bind(v.#pop(),val));
                     }else{
                         //PASS
-                    }
+                    }*/
                     break;
-                case ')':
+                case map.#farrow(`)`):
                     v.#push(gen);
                     return v;
+                case map.#farrow(`[→]`):
+                    if(map.#getv(v.#last()) !== null){
+                        fbind=()=>()=>{
+                            let val=v.#pop();
+                            v.#push(map.#bind(v.#pop(),val));
+                            return ()=>fbind;
+                        };
+                        break;
+                    }else{
+                        //fall-though
+                    }
                 default:
                     v.#push(x.value);
             }
+            fbind=fbind();
             x=gen.next();
         }
         v.#empty();
@@ -212,7 +227,7 @@ class map{
                 case `→`:
                     return ((x)=>(x === `→`) ? x : ``)(map.#farrow(val));
                 case `v`:
-                    return val.map((v)=>v.toString()).join(``);
+                    return val.map((v)=>feach(v)).join(``);
                 default:
                     return val.toString();
             }
