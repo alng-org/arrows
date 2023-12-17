@@ -76,7 +76,7 @@ function current_pair(sel){
     }
     let search_quote=(init_con,next,level,target_level)=>{
         let con = null;
-        for(let e=init_con; e !=null && level != target_level; e=next(e)){
+        for(let e=init_con; e != null && level != target_level; e=next(e)){
             if(e.nodeName == `SPAN`){
                 switch(e.textContent){
                     case `(`:
@@ -170,7 +170,7 @@ function edit(str){
     after_edit();
 }
 function keydown(event) {
-    if((event.ctrlKey || event.altKey || event.shiftKey) && /(Arrow)?Right/.test(event.key)){
+    if((event.ctrlKey || event.altKey || event.shiftKey) && /(Arrow)?Right| /.test(event.key)){
         event.preventDefault();
         edit(`→`);
     }else if(/Enter/.test(event.key)){
@@ -272,5 +272,5 @@ function init(code){
             background-image:linear-gradient(to right,orange ${i-100}%,red,orange ${i}%,red,orange ${i+100}%);
         }`);
     }
-    edit(`Alt or Ctrl or Shift + Enter to input () \nAlt or Ctrl or Shift + RightArrow to input →`);
+    edit(`Alt or Ctrl or Shift + Enter to input () \nAlt or Ctrl or Shift + RightArrow or Space to input →`);
 }
