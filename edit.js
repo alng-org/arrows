@@ -170,7 +170,9 @@ function edit(str){
     after_edit();
 }
 function is_mobile(){
-
+  return (`ontouchstart` in document.documentElement); 
+  //See more at: https://www.ruanyifeng.com/blog/2021/09/detecting-mobile-browser.html
+  //NOTE: I don't know whether it works in any devices.
 }
 function edit_arrow(){
     edit(`→`);
@@ -212,17 +214,21 @@ function keydown(event) {
 function beforeinput(event) {
     if(/insertText/.test(event.inputType)){
         event.preventDefault();
-        //edit(event.data);
-        switch(event.data){
-            case `(`:
-                edit_pair();
-                break;
-            case `)`:
-                edit_arrow();
-                break;
-            default:
-                edit(event.data);
+        if(is_mobile() == true){
+            switch(event.data){
+                case `(`:
+                    edit_pair();
+                    break;
+                case `)`:
+                    edit_arrow();
+                    break;
+                default:
+                    edit(event.data);
+            }
+        }else{
+            edit(event.data);
         }
+        
     } else if (/insertCompositionText/.test(event.inputType)) {
         // Pending
     }else if(/deleteContentBackward/.test(event.inputType)){//press backspace
@@ -296,5 +302,9 @@ function init(code){
             background-image:linear-gradient(to right,orange ${i-100}%,red,orange ${i}%,red,orange ${i+100}%);
         }`);
     }
-    edit(`Alt or Ctrl or Shift + Enter to input () \nAlt or Ctrl or Shift + RightArrow or Space to input →`);
+    if(is_mobile() == true){
+        edit(`( to input ()\n) to input →`);
+    }else{
+        edit(`Alt or Ctrl or Shift + Enter to input () \nAlt or Ctrl or Shift + RightArrow or Space to input →`);
+    }
 }
