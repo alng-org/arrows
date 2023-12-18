@@ -196,6 +196,8 @@ function keydown(event) {
     }else if(/Tab/.test(event.key)){
         event.preventDefault();
         edit(`\t`);
+    }else if(/Shift/.test(event.key)){
+        edit(`[Shift]`);
     }else{
         /*PASS*/
     }
@@ -247,6 +249,10 @@ function paste(event) {
     event.preventDefault();
     edit(event.clipboardData.getData("text/plain"));
 }
+function focus(event){
+    //console.log(event);   
+    current_pair(getsel());
+}
 function selectionchange(event){
     //console.log(event);   
     current_pair(getsel());
@@ -263,6 +269,7 @@ function init(code){
     code.addEventListener("copy", copy());
     code.addEventListener("cut", cut());
     code.addEventListener("paste", paste);
+    code.addEventListener("focus",focus);
     document.addEventListener("selectionchange",selectionchange); // selectionchange is base on document specialy
     //==============
     let key_frame=document.styleSheets[0].cssRules[1]; //@key_frame arrow_animi
