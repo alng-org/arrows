@@ -172,23 +172,28 @@ function edit(str){
 function is_mobile(){
 
 }
+function edit_arrow(){
+    edit(`→`);
+}
+function edit_pair(){
+    let sel=resel(getsel());
+    let ct=sel.cloneContents();
+    edit(`()`);
+    sel=resel(getsel());
+    sel.setStartBefore(sel.startContainer.childNodes[sel.startOffset-1]);
+    sel.collapse(true);
+    sel.insertNode(ct);
+    sel.collapse(false);
+    after_edit();
+}
 function keydown(event) {
-    if(((event.ctrlKey || event.altKey || event.shiftKey) && /(Arrow)?Right| /.test(event.key))
-    || ( true && /\)/.test(event.key))){
+    if((event.ctrlKey || event.altKey || event.shiftKey) && /(Arrow)?Right| /.test(event.key)){
         event.preventDefault();
-        edit(`→`);
+        edit_arrow();
     }else if(/Enter/.test(event.key)){
         event.preventDefault();
         if(event.ctrlKey || event.altKey || event.shiftKey){
-            let sel=resel(getsel());
-            let ct=sel.cloneContents();
-            edit(`()`);
-            sel=resel(getsel());
-            sel.setStartBefore(sel.startContainer.childNodes[sel.startOffset-1]);
-            sel.collapse(true);
-            sel.insertNode(ct);
-            sel.collapse(false);
-            after_edit();
+            edit_pair();
         }else{
             edit(`\n`);
         }
@@ -207,7 +212,17 @@ function keydown(event) {
 function beforeinput(event) {
     if(/insertText/.test(event.inputType)){
         event.preventDefault();
-        edit(event.data);
+        //edit(event.data);
+        switch(event.data){
+            case `(`:
+                edit_pair();
+                break;
+            case `)`:
+                edit_arrow();
+                break;
+            default:
+                edit(event.data);
+        }
     } else if (/insertCompositionText/.test(event.inputType)) {
         // Pending
     }else if(/deleteContentBackward/.test(event.inputType)){//press backspace
