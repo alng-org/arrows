@@ -169,8 +169,12 @@ function edit(str){
     sel.collapse(false);
     after_edit();
 }
+function is_mobile(){
+
+}
 function keydown(event) {
-    if((event.ctrlKey || event.altKey || event.shiftKey) && /(Arrow)?Right| /.test(event.key)){
+    if(((event.ctrlKey || event.altKey || event.shiftKey) && /(Arrow)?Right| /.test(event.key))
+    || ( true && /\)/.test(event.key))){
         event.preventDefault();
         edit(`→`);
     }else if(/Enter/.test(event.key)){
@@ -196,8 +200,6 @@ function keydown(event) {
     }else if(/Tab/.test(event.key)){
         event.preventDefault();
         edit(`\t`);
-    }else if(/Shift/.test(event.key)){
-        edit(`[Shift]`);
     }else{
         /*PASS*/
     }
