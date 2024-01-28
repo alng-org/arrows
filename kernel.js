@@ -12,9 +12,10 @@ class map{
                 //PASS
             }
         };
-        for(let atom of src.match(/\(|→|\)|[^\(→\)]+/g)){
+        for(let atom of src.match(/\(|→|←|\)|[^\(→←\)]+/g)){
             switch(atom){ //fallthough is right
                 case `→`:
+                case `←`:
                 case `)`:
                     yield* gen_base(map.#farrow([``]));
                     yield map.#farrow(atom);
@@ -22,10 +23,11 @@ class map{
                 case `(`:
                 default:
                     let fv=(x)=>(x === `(`) ? x : [x];
-                    yield* gen_base(map.#farrow(fv(atom)),map.#farrow(`[→]`));
+                    yield* gen_base(map.#farrow(fv(atom)),map.#farrow(`←`));
             }
             switch(atom){ //fallthough is right
                 case `→`:
+                case `←`:
                 case `(`:
                     expr_req=true;
                     break;
@@ -106,12 +108,12 @@ class map{
         switch(arrow){
             case `→`:
                 return Symbol.for(`→`);
-            case `[→]`:
-                return Symbol.for(`[→]`);
+            case `←`:
+                return Symbol.for(`←`);
             case Symbol.for(`→`):
                 return `→`;
-            case Symbol.for(`[→]`):
-                return `[→]`;
+            case Symbol.for(`←`):
+                return `←`;
             default:
                 return arrow;
         }
@@ -126,7 +128,7 @@ class map{
                     v.#push(map.#fgroup(gen));
                     gen=v.#last().#pop(); // it's not need to do so...
                    /* if(map.#bindable(v.#at(-3)) !== null 
-                    && map.#farrow(v.#at(-2)) === `[→]`){
+                    && map.#farrow(v.#at(-2)) === `←`){
                         let val=v.#pop();
                         v.#pop();
                        v.#push(map.#bind(v.#pop(),val));
@@ -137,7 +139,7 @@ class map{
                 case map.#farrow(`)`):
                     v.#push(gen);
                     return v;
-                case map.#farrow(`[→]`):
+                case map.#farrow(`←`):
                     if(map.#getv(v.#last()) !== null){
                         fbind=()=>()=>{
                             let val=v.#pop();

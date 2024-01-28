@@ -6,7 +6,7 @@
     <title>a Language</title>
     <link rel="icon" href="favicon.ico"/>
     <style>
-        .arrow{
+        .arrow,.varrow{
             background-clip: text;
             -webkit-background-clip: text;
             color:transparent;
@@ -15,8 +15,11 @@
             animation-duration: 3s;
             animation-iteration-count: infinite;
         }
-        @keyframes arrow_animi {
-            /*See it at function init*/
+        @keyframes arrow_animi{
+            /*See it at function init at edit.js*/
+        }
+        .varrow{
+            animation-direction: reverse;
         }
         .quote_0{
             color: yellow;

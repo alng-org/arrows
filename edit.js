@@ -4,9 +4,11 @@ function node(html){
 }
 function doc(src){
     let Doc=document.createDocumentFragment();
-    for(let atom of src.match(/\(|→|\)|\n|[^\(→\)\n]+/g)){
+    for(let atom of src.match(/\(|→|←|\)|\n|[^\(→←\)\n]+/g)){
         if(atom == `→`){
             Doc.append(node(`<span class="arrow" >→</span>`));
+        }else if(atom ==`←`){
+            Doc.append(node(`<span class="varrow" >←</span>`));
         }else if([`(`,`)`].includes(atom)){
             Doc.append(node(`<span class="quote" >${atom}</span>`));
         }else if(atom == `\n`){
@@ -177,6 +179,9 @@ function is_mobile(){
 function edit_arrow(){
     edit(`→`);
 }
+function edit_varrow(){
+    edit(`←`);
+}
 function edit_pair(){
     let sel=resel(getsel());
     let ct=sel.cloneContents();
@@ -189,9 +194,16 @@ function edit_pair(){
     after_edit();
 }
 function keydown(event) {
-    if((event.ctrlKey || event.altKey || event.shiftKey) && /(Arrow)?Right| /.test(event.key)){
-        event.preventDefault();
-        edit_arrow();
+    if((event.ctrlKey || event.altKey || event.shiftKey)){
+        if(/(Arrow)?Right/.test(event.key)){
+            event.preventDefault();
+            edit_arrow();
+        }else if(/(Arrow)?Left/.test(event.key)){
+            event.preventDefault();
+            edit_varrow();
+        }else{
+            //pass
+        }
     }else if(/Enter/.test(event.key)){
         event.preventDefault();
         if(event.ctrlKey || event.altKey || event.shiftKey){
@@ -303,8 +315,11 @@ function init(code){
         }`);
     }
     if(is_mobile() == true){
-        edit(`( to input ()\n) to input →`);
+        edit(`( to input ()\n) to input →`); //moblie's support deprecated
     }else{
-        edit(`Alt or Ctrl or Shift + Enter to input () \nAlt or Ctrl or Shift + RightArrow or Space to input →`);
+        edit(`\
+Alt or Ctrl or Shift + Enter to input ()
+Alt or Ctrl or Shift + RightArrow to input →
+Alt or Ctrl or Shift + LeftArrow to input ←`);
     }
 }
