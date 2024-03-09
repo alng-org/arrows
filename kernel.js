@@ -152,7 +152,7 @@ function paired(str){
     //return null if it has no paired char
     let pair=[`()`,`[]`,`{}`];
     let tmp=``;
-    if(str.length == 1){
+    if(type(str) === type(``) && str.length == 1){
         for(let x of pair){
             tmp=x.replace(str,``);
             if(tmp.length === 1){
