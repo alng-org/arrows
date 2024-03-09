@@ -4,12 +4,12 @@ function node(html){
 }
 function doc(src){
     let Doc=document.createDocumentFragment();
-    for(let atom of src.match(/\(|→|←|\)|\n|[^\(→←\)\n]+/g)){
+    for(let atom of src.match(/\{|\[|\(|→|←|\)|\]|\}|[^\{\[\(→←\)\]\}]+/g)){
         if(atom == `→`){
             Doc.append(node(`<span class="arrow" >→</span>`));
         }else if(atom ==`←`){
             Doc.append(node(`<span class="varrow" >←</span>`));
-        }else if([`(`,`)`].includes(atom)){
+        }else if(`{}[]()`.includes(atom)){
             Doc.append(node(`<span class="quote" >${atom}</span>`));
         }else if(atom == `\n`){
             Doc.append(node(`<br>`));
@@ -41,13 +41,17 @@ function pair(doc){
                            `quote_unpair`,
                            `quote_current_pair`);
         switch(q.textContent){
+            case `{`:
+            case `[`:
             case `(`:
                 unpair_list.push(q);
                 level=level+1;
                 break;
+            case `}`:
+            case `]`:
             case `)`:
                 last=unpair_list[unpair_list.length-1];
-                if(last != undefined && last.textContent == `(`){
+                if(last != undefined && paired(last.textContent) == q.textContent ){
                     unpair_list.pop();
                     level=level-1;
                     last.classList.add(`quote_${level % 3}`);
@@ -66,6 +70,7 @@ function pair(doc){
     return unpair_list.map(q=>q.textContent);
 }
 function current_pair(sel){
+    //can it redesign?
     pair(document);
     sel=resel(sel.cloneRange());
     let fcon=(con,ofs)=>{
@@ -81,10 +86,14 @@ function current_pair(sel){
         for(let e=init_con; e != null && level != target_level; e=next(e)){
             if(e.nodeName == `SPAN`){
                 switch(e.textContent){
+                    case `{`:
+                    case `[`:
                     case `(`:
                         level = level + 1;
                         con = e;
                         break;
+                    case `}`:
+                    case `]`:
                     case `)`:
                         level = level - 1;
                         con = e;
@@ -118,11 +127,11 @@ function current_pair(sel){
     let unpair=pair(sel.cloneContents());
     let start=mark(sel,(s)=>s.startContainer,(s)=>s.startOffset-1,(s)=>s.previousSibling,
          1,`quote_current_pair`,
-         unpair.reduce((x,y)=>x + ( ( y == `)` ) ? -1 : 0 ) , 0),
+         unpair.reduce((x,y)=>x + ( ( `)]}`.includes(y) ) ? -1 : 0 ) , 0),
          (r)=>0);
     let end=mark(sel,(s)=>s.endContainer,(s)=>s.endOffset,(s)=>s.nextSibling,
          -1,`quote_current_pair`,
-         unpair.reduce((x,y)=>x + ( ( y == `(` ) ? 1 : 0 ) , 0),
+         unpair.reduce((x,y)=>x + ( ( `{[(`.includes(y) ) ? 1 : 0 ) , 0),
          (r)=>r.childNodes.length-1);
     return (sel)=>{
         if(start != null && end != null){
@@ -182,10 +191,10 @@ function edit_arrow(){
 function edit_varrow(){
     edit(`←`);
 }
-function edit_pair(){
+function edit_pair(empty_pair){
     let sel=resel(getsel());
     let ct=sel.cloneContents();
-    edit(`()`);
+    edit(empty_pair);
     sel=resel(getsel());
     sel.setStartBefore(sel.startContainer.childNodes[sel.startOffset-1]);
     sel.collapse(true);
@@ -206,11 +215,16 @@ function keydown(event) {
         }
     }else if(/Enter/.test(event.key)){
         event.preventDefault();
-        if(event.ctrlKey || event.altKey || event.shiftKey){
-            edit_pair();
-        }else{
-            edit(`\n`);
-        }
+        edit(`\n`);
+    }else if(/\(/.test(event.key)){
+        event.preventDefault();
+        edit_pair(`()`);
+    }else if(/\[/.test(event.key)){
+        event.preventDefault();
+        edit_pair(`[]`);
+    }else if(/\{/.test(event.key)){
+        event.preventDefault();
+        edit_pair(`{}`);
     }else if((event.ctrlKey || event.altKey) && /Q|q/.test(event.key)){
         event.preventDefault();
         let sel=getsel();
@@ -226,21 +240,7 @@ function keydown(event) {
 function beforeinput(event) {
     if(/insertText/.test(event.inputType)){
         event.preventDefault();
-        if(is_mobile() == true){
-            switch(event.data){
-                case `(`:
-                    edit_pair();
-                    break;
-                case `)`:
-                    edit_arrow();
-                    break;
-                default:
-                    edit(event.data);
-            }
-        }else{
-            edit(event.data);
-        }
-        
+        edit(event.data);
     } else if (/insertCompositionText/.test(event.inputType)) {
         // Pending
     }else if(/deleteContentBackward/.test(event.inputType)){//press backspace
@@ -315,11 +315,14 @@ function init(code){
         }`);
     }
     if(is_mobile() == true){
-        edit(`( to input ()\n) to input →`); //moblie's support deprecated
+        edit(`Please use computer visits it.`); 
     }else{
         edit(`\
-Alt or Ctrl or Shift + Enter to input ()
+( to input ()
+[ to input []
+{ to input {}
 Alt or Ctrl or Shift + RightArrow to input →
-Alt or Ctrl or Shift + LeftArrow to input ←`);
+Alt or Ctrl or Shift + LeftArrow to input ←
+`);
     }
 }
