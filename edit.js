@@ -210,26 +210,17 @@ function keydown(event) {
         }else if(/(Arrow)?Left/.test(event.key)){
             event.preventDefault();
             edit_varrow();
+        }else if((event.ctrlKey || event.altKey ) && /Q|q/.test(event.key)){
+            event.preventDefault();
+            let sel=getsel();
+            let fsel=current_pair(sel);
+            fsel(sel);
         }else{
             //pass
         }
     }else if(/Enter/.test(event.key)){
         event.preventDefault();
         edit(`\n`);
-    }else if(/\(/.test(event.key)){
-        event.preventDefault();
-        edit_pair(`()`);
-    }else if(/\[/.test(event.key)){
-        event.preventDefault();
-        edit_pair(`[]`);
-    }else if(/\{/.test(event.key)){
-        event.preventDefault();
-        edit_pair(`{}`);
-    }else if((event.ctrlKey || event.altKey) && /Q|q/.test(event.key)){
-        event.preventDefault();
-        let sel=getsel();
-        let fsel=current_pair(sel);
-        fsel(sel);
     }else if(/Tab/.test(event.key)){
         event.preventDefault();
         edit(`\t`);
@@ -240,7 +231,15 @@ function keydown(event) {
 function beforeinput(event) {
     if(/insertText/.test(event.inputType)){
         event.preventDefault();
-        edit(event.data);
+        if(/\(/.test(event.data)){
+            edit_pair(`()`);
+        }else if(/\[/.test(event.data)){
+            edit_pair(`[]`);
+        }else if(/\{/.test(event.data)){
+            edit_pair(`{}`);
+        }else{
+            edit(event.data);
+        }
     } else if (/insertCompositionText/.test(event.inputType)) {
         // Pending
     }else if(/deleteContentBackward/.test(event.inputType)){//press backspace
