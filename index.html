@@ -36,6 +36,13 @@
         .quote_current_pair{
             background-color: gray;
         }
+        *::selection{
+            background-color:coral;
+        }
+        :is(.arrow,.varrow)::selection{
+            color:red; //maybe it can be better
+        }
+
     </style>
 </head>
 <body onload="init(document.getElementById('code'))"
