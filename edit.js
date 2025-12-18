@@ -168,10 +168,7 @@ function getsel(){
     return sel;
 }
 function after_edit(){
-    //pair(document);
     document.normalize();
-
-   // current_pair(getsel());
 }
 function edit(str){
     let sel=resel(getsel());
@@ -277,31 +274,27 @@ function copy(event) {
 }
 function cut(event) {
     resel(getsel());
-    //After edit
+    //after edit
 }
 function paste(event) {
     event.preventDefault();
     edit(event.clipboardData.getData("text/plain"));
 }
 function focus(event){
-    //console.log(event);   
     current_pair(getsel());
 }
 function selectionchange(event){
-    //console.log(event);   
     current_pair(getsel());
 }
 function init(code){
     code.focus();
-   // setInterval(focus,100);
     code.addEventListener("keydown",keydown);
     code.addEventListener("beforeinput", beforeinput);
     code.addEventListener("input", input);
     code.addEventListener('compositionstart', compositionstart);
-    //code.addEventListener('compositiin')
     code.addEventListener('compositionend', compositionend);
-    code.addEventListener("copy", copy());
-    code.addEventListener("cut", cut());
+    code.addEventListener("copy", copy);
+    code.addEventListener("cut", cut);
     code.addEventListener("paste", paste);
     code.addEventListener("focus",focus);
     document.addEventListener("selectionchange",selectionchange); // selectionchange is base on document specialy
@@ -325,3 +318,4 @@ Alt or Ctrl or Shift + LeftArrow to input ←
 `);
     }
 }
+
