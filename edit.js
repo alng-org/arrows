@@ -316,9 +316,11 @@ function init(code){
 { : Input {}
 Alt/Ctrl/Shift + → : Input →
 Alt/Ctrl/Shift + ← : Input ←
-Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}`);
+Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
+`);
     }
 }
+
 
 
 
