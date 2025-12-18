@@ -311,13 +311,14 @@ function init(code){
         edit(`Please use computer visits it.`); 
     }else{
         edit(`\
-( to input ()
-[ to input []
-{ to input {}
-Alt or Ctrl or Shift + RightArrow to input →
-Alt or Ctrl or Shift + LeftArrow to input ←
-Alt or Ctrl + Q or q to select a whole code includes () or [] or {} which contains the selected code as subsequence as usual`);
+( : Input ()
+[ : Input []
+{ : Input {}
+Alt/Ctrl/Shift + → : Input →
+Alt/Ctrl/Shift + ← : Input ←
+Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}`);
     }
 }
+
 
 
