@@ -251,7 +251,9 @@ function beforeinput(event) {
 function input(event) {
     if(/deleteContentBackward/.test(event.inputType)){//press backspace
         after_edit();
-    } else if(/deleteContentForward/.test(event.inputType)){// press del
+    }else if(/deleteContentForward/.test(event.inputType)){// press del
+        after_edit();
+    }else if(/deleteByCut/.test(event.inputType)){// after cut
         after_edit();
     }else{
         //PASS
@@ -274,7 +276,6 @@ function copy(event) {
 }
 function cut(event) {
     resel(getsel());
-    //after edit
 }
 function paste(event) {
     event.preventDefault();
@@ -315,7 +316,8 @@ function init(code){
 { to input {}
 Alt or Ctrl or Shift + RightArrow to input →
 Alt or Ctrl or Shift + LeftArrow to input ←
-`);
+Alt or Ctrl + Q or q to select a whole code includes () or [] or {} which contains the selected code as subsequence as usual`);
     }
 }
+
 
