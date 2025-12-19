@@ -8,7 +8,6 @@
     minimum-scale=1.0
     maximum-scale=1.0
     user-scalable=no
-    interactive-widget=resizes-content
     "
 />
 <head>
@@ -55,7 +54,7 @@
         }
         #code{
             font-family:math;
-            font-size:3.0rem;
+            font-size:1.5rem;
             background-color:black;
             color:darkcyan;
             caret-color: aquamarine;
@@ -73,9 +72,10 @@
         
     </style>
 </head>
-<body onload="init(document.getElementById('code'))" onresize="alert('hi')">
+<body onload="init(document.getElementById('code'))">
     <div id="code" contenteditable="true"><br class="Not_Text"></div>
 </body>
+
 
 
 
