@@ -167,6 +167,15 @@ function getsel(){
     let sel=window.getSelection().getRangeAt(0);
     return sel;
 }
+function visible_sel(code){
+    // keep the caret visibility
+    code.scrollIntoView(
+        {
+            behavior:`smooth`,
+            block: 'nearest'
+        }
+    );
+}
 function after_edit(){
     document.normalize();
 }
@@ -281,11 +290,16 @@ function paste(event) {
     event.preventDefault();
     edit(event.clipboardData.getData("text/plain"));
 }
-function focus(event){
+function focus(event,code){
     current_pair(getsel());
+    visible_sel(code);
 }
-function selectionchange(event){
+function selectionchange(event,code){
     current_pair(getsel());
+    visible_sel(code);
+}
+function resize(event,code){
+    visible_sel(code);
 }
 function init(code){
     code.focus();
@@ -297,8 +311,9 @@ function init(code){
     code.addEventListener("copy", copy);
     code.addEventListener("cut", cut);
     code.addEventListener("paste", paste);
-    code.addEventListener("focus",focus);
-    document.addEventListener("selectionchange",selectionchange); // selectionchange is base on document specialy
+    code.addEventListener("focus",event => focus(event,code));
+    document.addEventListener("selectionchange",event => selectionchange(event,code)); // selectionchange is base on document specialy
+    document.body.addEventListener("resize",event => resize(event,code));
     //==============
     let key_frame=document.styleSheets[0].cssRules[1]; //@key_frame arrow_animi
     for(let i=0;i<=100;i=i+1){
@@ -320,6 +335,7 @@ Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
     }
 }
+
 
 
 
