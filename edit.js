@@ -313,7 +313,7 @@ function init(code){
     code.addEventListener("paste", paste);
     code.addEventListener("focus",event => focus(event,code));
     document.addEventListener("selectionchange",event => selectionchange(event,code)); // selectionchange is base on document specialy
-    document.body.addEventListener("resize",event => resize(event,code));
+    window.visualViewport.addEventListener("resize",event => resize(event,code)); // resize is base on window.visualViewport
     //==============
     let key_frame=document.styleSheets[0].cssRules[1]; //@key_frame arrow_animi
     for(let i=0;i<=100;i=i+1){
@@ -335,6 +335,7 @@ Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
     }
 }
+
 
 
 
