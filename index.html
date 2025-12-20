@@ -62,17 +62,24 @@
             margin:0;
             padding:1.0rem;
             position:fixed;
-            left:0;
+            /*left:0;
             top:0;
             width:100dvw;
-            height:100dvh;
+            height:100dvh;*/
             overflow:scroll;
             white-space:pre;
 
             
  box-sizing: border-box;
  border: 3px dashed red;
+ flex:100%;
 
+        }
+        body{
+            display:flex;
+            flex-direction:column;
+            height:100dvh;
+            weight:100dvw;
         }
         
     </style>
@@ -80,6 +87,7 @@
 <body onload="init(document.getElementById('code'))">
     <div id="code" contenteditable="true"><br class="Not_Text"></div>
 </body>
+
 
 
 
