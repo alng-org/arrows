@@ -172,11 +172,11 @@ function visible_sel(code){
     let sel = resel(getsel());
     if(sel.collapsed === true){
         let fscroll = (min,max,scrolled) =>{
-            min = min + scrolled;
-            max = max + scrolled;
+          //  min = min + scrolled;
+          //  max = max + scrolled;
             return (t) => {
                 if(t < min){
-                    return t - min;
+                    return min - t;
                 }else if(t > max){
                     return t - max;
                 }else{
@@ -371,6 +371,7 @@ Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
     }
 }
+
 
 
 
