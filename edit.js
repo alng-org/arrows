@@ -176,9 +176,9 @@ function visible_sel(code){
             max = max + scrolled;
             return (t) => {
                 if(t < min){
-                    return min - t;
+                    return t - min;
                 }else if(t > max){
-                    return max - t;
+                    return t - max;
                 }else{
                     return 0;
                 }
@@ -371,6 +371,7 @@ Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
     }
 }
+
 
 
 
