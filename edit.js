@@ -168,8 +168,8 @@ function getsel(){
     return sel;
 }
 function rect_sel(sel){
-    let node = sel.endContainer.childNodes[sel.endOffset];
-    if(node.nodeName == `BR`){
+    let node = sel.endContainer?.childNodes?.[sel.endOffset];
+    if(node?.nodeName == `BR`){
         return node.getBoundingClientRect();
     }else{
         return sel.getBoundingClientRect();
@@ -379,6 +379,7 @@ Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
     }
 }
+
 
 
 
