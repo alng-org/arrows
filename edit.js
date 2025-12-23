@@ -183,10 +183,10 @@ function rect_sel(sel){
         ){
             let brt = before_sel.getBoundingClientRect();
             return new DOMRect(
-                before_sel.right, // x
-                before_sel.top,   //  y
-                0,                //   width
-                before_sel.height //   height
+                brt.right, // x
+                brt.top,   // y
+                0,         // width
+                brt.height // height
             );
         }else{
             return null; // can't locate the caret
@@ -397,6 +397,7 @@ Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
     }
 }
+
 
 
 
