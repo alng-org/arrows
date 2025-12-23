@@ -398,7 +398,7 @@ function init(code,toolbar){
                     fclick();
                 }
             );
-            tool_bar.append(button);
+            toolbar.append(button);
         };
         append_tool(
             "{}",
@@ -436,5 +436,6 @@ Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
     }
 }
+
 
 
