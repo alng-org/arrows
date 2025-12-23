@@ -168,11 +168,29 @@ function getsel(){
     return sel;
 }
 function rect_sel(sel){
-    let node = sel.endContainer?.childNodes?.[sel.endOffset];
-    if(node?.nodeName == `BR`){
-        return node.getBoundingClientRect();
-    }else{
+    if(sel.commonAncestorContainer.nodeName === "#text"){
         return sel.getBoundingClientRect();
+    }else{
+        let before_sel = sel.startContainer?.childNodes?.[sel.startOffset - 1];
+        let after_sel = sel.endContainer?.childNodes?.[sel.endOffset];
+        if(
+            after_sel?.nodeName === "BR" || 
+            after_sel?.nodeName === "SPAN"
+        ){
+            return after_sel.getBoundingClientRect();
+        }else if(
+            before_sel?.nodeName === "SPAN"
+        ){
+            let brt = before_sel.getBoundingClientRect();
+            return new DOMRect(
+                before_sel.right, // x
+                before_sel.top,   //  y
+                0,                //   width
+                before_sel.height //   height
+            );
+        }else{
+            return null; // can't locate the caret
+        }
     }
 }
 function visible_sel(code){
@@ -379,6 +397,7 @@ Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
     }
 }
+
 
 
 
