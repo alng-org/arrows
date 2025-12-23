@@ -387,7 +387,7 @@ function init(code,toolbar){
             background-image:linear-gradient(to right,orange ${i-100}%,red,orange ${i}%,red,orange ${i+100}%);
         }`);
     }
-    if(toolbar.style.visibility === "visible"){
+    if(window.getComputedStyle(toolbar).visibility === "visible"){
         let append_tool = (src, fclick)=>{
             let button = document.createElement("button");
             button.append(doc(src));
@@ -436,4 +436,5 @@ Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
     }
 }
+
 
