@@ -421,7 +421,7 @@ function init(code,toolbar){
             () => edit_varrow()
         );
         append_tool(
-            "(..) | [..] | {..}",
+            "<(..)>\n<[..]>\n<{..}>",
             ()=> expand_sel()
         );
         
@@ -436,6 +436,7 @@ Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
     }
 }
+
 
 
 
