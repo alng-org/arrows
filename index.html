@@ -103,10 +103,16 @@
                 background-color:skyblue;
                 border:none;
                 margin:0;
-                padding:0.1rem;
+                padding:0;
                 flex:1;
                 box-sizing: border-box;
+                filter: brightness(1);
+                transition: filter 0.2s ease;
             }
+            #toolbar > button:active {
+                filter: brightness(0.8);
+            }
+            
         }
         body{
             display:flex;
@@ -123,6 +129,7 @@
     <div id="code" contenteditable="true"><br class="Not_Text"></div>
     <div id="toolbar"></div>
 </body>
+
 
 
 
