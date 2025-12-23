@@ -387,46 +387,43 @@ function init(code,toolbar){
             background-image:linear-gradient(to right,orange ${i-100}%,red,orange ${i}%,red,orange ${i+100}%);
         }`);
     }
-    if(window.getComputedStyle(toolbar).visibility === "visible"){
-        let append_tool = (src, fclick)=>{
-            let button = document.createElement("button");
-            button.append(doc(src));
-            button.addEventListener(
-                "click",
-                (event) => {
-                    code.focus();
-                    fclick();
-                }
-            );
-            toolbar.append(button);
-        };
-        append_tool(
-            "{}",
-            () => edit_pair("{}")
+    let append_tool = (src, fclick)=>{
+        let button = document.createElement("button");
+        button.append(doc(src));
+        button.addEventListener(
+            "click",
+            (event) => {
+                code.focus();
+                fclick();
+            }
         );
-        append_tool(
-            "[]",
-            () => edit_pair("[]")
-        );
-        append_tool(
-            "()",
-            () => edit_pair("()")
-        );
-        append_tool(
-            "→",
-            () => edit_arrow()
-        );
-        append_tool(
-            "←",
-            () => edit_varrow()
-        );
-        append_tool(
-            "<(..)>\n<[..]>\n<{..}>",
-            ()=> expand_sel()
-        );
-        
-    }else{
-        edit(`\
+        toolbar.append(button);
+    };
+    append_tool(
+        "{}",
+        () => edit_pair("{}")
+    );
+    append_tool(
+        "[]",
+        () => edit_pair("[]")
+    );
+    append_tool(
+        "()",
+        () => edit_pair("()")
+    );
+    append_tool(
+        "→",
+        () => edit_arrow()
+    );
+    append_tool(
+        "←",
+        () => edit_varrow()
+    );
+    append_tool(
+        "<{[(..)]}>",
+        ()=> expand_sel()
+    );
+    edit(`\
 ( : Input ()
 [ : Input []
 { : Input {}
@@ -434,8 +431,8 @@ Alt/Ctrl/Shift + → : Input →
 Alt/Ctrl/Shift + ← : Input ←
 Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
-    }
 }
+
 
 
 
