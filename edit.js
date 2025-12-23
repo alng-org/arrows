@@ -197,9 +197,7 @@ function visible_sel(code){
     // keep the caret visibility
     let sel = resel(getsel());
     if(sel.collapsed === true){
-        let fscroll = (min,max,scrolled) =>{
-            min = min + scrolled;
-            max = max + scrolled;
+        let fscroll = (min,max) =>{
             return (t) => {
                 if(t < min){
                     return t - min;
@@ -210,7 +208,12 @@ function visible_sel(code){
                 }
             };
         };
-        let code_rect = code.getBoundingClientRect();
+        let code_rect = new DOMRect(
+            0,                // x (special)
+            0,                // y (special)
+            code.clientWidth, // width
+            code.clientHeight // height
+        );
         let sel_rect = rect_sel(sel);
         let half_sel_h = sel_rect.height / 2;
         let padding = Number.parseFloat( window.getComputedStyle(code).padding );
@@ -222,7 +225,6 @@ function visible_sel(code){
         let yscroll = fscroll(
             code_rect.top + padding + half_sel_h,
             code_rect.bottom - padding - half_sel_h,
-            code.scrollTop
         );
 
 
@@ -397,19 +399,3 @@ Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
