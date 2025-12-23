@@ -167,6 +167,14 @@ function getsel(){
     let sel=window.getSelection().getRangeAt(0);
     return sel;
 }
+function rect_sel(sel){
+    let node = sel.endContainer.childNodes[sel.endOffset];
+    if(node.nodeName == `BR`){
+        return node.getBoundingClientRect();
+    }else{
+        return sel.getBoundingClientRect();
+    }
+}
 function visible_sel(code){
     // keep the caret visibility
     let sel = resel(getsel());
@@ -185,7 +193,7 @@ function visible_sel(code){
             };
         };
         let code_rect = code.getBoundingClientRect();
-        let sel_rect = sel.getBoundingClientRect();
+        let sel_rect = rect_sel(sel);
         let half_sel_h = sel_rect.height / 2;
         let padding = Number.parseFloat( window.getComputedStyle(code).padding );
         let xscroll = fscroll(
@@ -371,6 +379,7 @@ Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
     }
 }
+
 
 
 
