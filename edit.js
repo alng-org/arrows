@@ -80,7 +80,7 @@ function current_pair(sel){
             let tmp = con.childNodes[ofs];
             return  ( tmp == undefined ) ? null : tmp; //Although in below, e != null will be false where e == undefined
         }
-    }
+    };
     let search_quote=(init_con,next,level,target_level)=>{
         let con = null;
         for(let e=init_con; e != null && level != target_level; e=next(e)){
@@ -163,6 +163,11 @@ function resel(sel){
          (s,c)=>s.setEndBefore(c),(s,c)=>s.setEndAfter(c));
     return sel;
 }
+function expand_sel(){
+    let sel = getsel();
+    let expand = current_pair(sel);
+    return expand(sel);
+}
 function getsel(){
     let sel=window.getSelection().getRangeAt(0);
     return sel;
@@ -227,8 +232,6 @@ function visible_sel(code){
             code_rect.bottom - padding - half_sel_h,
         );
 
-
-        //Maybe need RaF
         code.scrollBy(
             {
                 left:xscroll(sel_rect.x),
@@ -282,9 +285,7 @@ function keydown(event) {
             edit_varrow();
         }else if((event.ctrlKey || event.altKey ) && /Q|q/.test(event.key)){
             event.preventDefault();
-            let sel=getsel();
-            let fsel=current_pair(sel);
-            fsel(sel);
+            expand_sel();
         }else{
             //pass
         }
@@ -365,7 +366,7 @@ function selectionchange(event,code){
 function resize(event,code){
     visible_sel(code);
 }
-function init(code){
+function init(code,toolbar){
     code.focus();
     code.addEventListener("keydown",keydown);
     code.addEventListener("beforeinput", beforeinput);
@@ -386,8 +387,44 @@ function init(code){
             background-image:linear-gradient(to right,orange ${i-100}%,red,orange ${i}%,red,orange ${i+100}%);
         }`);
     }
-    if(is_mobile() == true){
-        edit(`Please use computer visits it.`); 
+    if(toolbar.style.visibility === "visible"){
+        let append_tool = (src, fclick)=>{
+            let button = document.createElement("button");
+            button.append(doc(src));
+            button.addEventListener(
+                "click",
+                (event) => {
+                    code.focus();
+                    fclick();
+                }
+            );
+            tool_bar.append(button);
+        };
+        append_tool(
+            "{}",
+            () => edit_pair("{}")
+        );
+        append_tool(
+            "[]",
+            () => edit_pair("[]")
+        );
+        append_tool(
+            "()",
+            () => edit_pair("()")
+        );
+        append_tool(
+            "→",
+            () => edit_arrow()
+        );
+        append_tool(
+            "←",
+            () => edit_varrow()
+        );
+        append_tool(
+            "(..) | [..] | {..}",
+            ()=> expand_sel()
+        );
+        
     }else{
         edit(`\
 ( : Input ()
@@ -399,3 +436,4 @@ Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
     }
 }
+
