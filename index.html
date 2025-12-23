@@ -99,6 +99,7 @@
                 font-family:math;
                 font-size:1.5rem;
                 text-align:center;
+                user-select:none;
                 color:darkcyan;
                 background-color:burlywood;
                 border:none;
@@ -106,13 +107,7 @@
                 padding:0;
                 flex:1;
                 box-sizing: border-box;
-                filter: brightness(1);
-                transition: filter 0.2s ease;
             }
-            #toolbar > button:active {
-                filter: brightness(0.8);
-            }
-            
         }
         body{
             display:flex;
@@ -129,6 +124,7 @@
     <div id="code" contenteditable="true"><br class="Not_Text"></div>
     <div id="toolbar"></div>
 </body>
+
 
 
 
