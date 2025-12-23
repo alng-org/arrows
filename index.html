@@ -10,7 +10,7 @@
     user-scalable=no
     interactive-widget=resizes-content
     "
-/>
+>
 <head>
     <script src="edit.js"></script>
     <script src="kernel.js"></script>
@@ -63,7 +63,6 @@
             margin:0;
             padding:1.0rem;
             width:100%;
-            height:100%;
             overflow:scroll;
             white-space:pre;
             flex:none;
@@ -71,8 +70,37 @@
             /*border: 3px dashed red;*/
         }
 
+        @media (any-pointer: fine) {
+            /* pc, laptop, etc... */
+            #code{
+                height:100%;
+            }
+            #toolbar{
+                visibility:hidden;
+            }
+        }
 
-        
+        @media (any-pointer: coarse) {
+            /* mobile phone, pad etc...*/
+            #code{
+                height:80%;
+            }
+            #toolbar{
+                visibility:visible;
+                width:100%;
+                height:20%;
+                margin:0;
+                padding:0;
+                display:flex;
+                flex-direction:row;
+            }
+            #toolbar>button{
+                flex:1;
+                font-family:math;
+                font-size:1.5rem;
+                background-color:bisque;
+            }
+        }
         body{
             display:flex;
             flex-direction:column;
@@ -84,9 +112,11 @@
         
     </style>
 </head>
-<body onload="init(document.getElementById('code'))">
+<body onload="init(document.getElementById('code'),document.getElementById('toolbar'))">
     <div id="code" contenteditable="true"><br class="Not_Text"></div>
+    <div id="toolbar"></div>
 </body>
+
 
 
 
