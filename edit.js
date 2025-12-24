@@ -430,6 +430,10 @@ function init(code,toolbar){
         () => edit_varrow()
     );
     append_tool(
+        "Tab",
+        () => edit(`\t`)
+    );
+    append_tool(
         "<{[(..)]}>",
         ()=> expand_sel()
     );
@@ -442,6 +446,7 @@ Alt/Ctrl/Shift + ← : Input ←
 Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
 }
+
 
 
 
