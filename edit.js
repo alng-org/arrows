@@ -263,11 +263,6 @@ function edit(str){
     sel.collapse(false);
     after_edit();
 }
-function is_mobile(){
-  return (`ontouchstart` in document.documentElement); 
-  //See more at: https://www.ruanyifeng.com/blog/2021/09/detecting-mobile-browser.html
-  //NOTE: I don't know whether it works in any devices.
-}
 function edit_arrow(){
     edit(`→`);
 }
@@ -446,6 +441,7 @@ Alt/Ctrl/Shift + ← : Input ←
 Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
 }
+
 
 
 
