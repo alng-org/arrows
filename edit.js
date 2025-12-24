@@ -193,6 +193,16 @@ function rect_sel(sel){
                 0,         // width
                 brt.height // height
             );
+        }else if(
+            before_sel?.nodeName === "BR"
+        ){
+            let brt = before_sel.getBoundingClientRect();
+            return new DOMRect(
+                - brt.right, // x
+                brt.bottom,   // y
+                0,         // width
+                brt.height // height
+            );
         }else{
             return null; // can't locate the caret
         }
@@ -432,6 +442,7 @@ Alt/Ctrl/Shift + ← : Input ←
 Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
 }
+
 
 
 
