@@ -8,8 +8,7 @@
     minimum-scale=1.0
     maximum-scale=1.0
     user-scalable=no
-    interactive-widget=resizes-content
-    "
+    interactive-widget=resizes-content"
 >
 <head>
     <script src="edit.js"></script>
@@ -21,7 +20,7 @@
             background-clip: text;
             -webkit-background-clip: text;
             color:transparent;
-            font-weight:black;
+            font-weight:bold;
             animation-name: arrow_animi;
             animation-duration: 3s;
             animation-iteration-count: infinite;
@@ -46,6 +45,12 @@
         }
         .quote_current_pair{
             background-color: gray;
+        }
+        .num{
+            color:plum;
+        }
+        .sym{
+            color:lightsalmon;
         }
         *::selection{
             background-color:coral;
@@ -124,6 +129,7 @@
     <div id="code" contenteditable="true"><br class="Not_Text"></div>
     <div id="toolbar"></div>
 </body>
+
 
 
 
