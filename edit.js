@@ -4,7 +4,7 @@ function node(html){
 }
 function doc(src){
     let Doc=document.createDocumentFragment();
-    for(let atom of src.match(/\{|\[|\(|→|←|\)|\]|\}|[^\{\[\(→←\)\]\}]+/g) ?? []){
+    for(let atom of src.match(/[\{\[\(→←\)\]\}]|[^\{\[\(→←\)\]\}]+/g) ?? []){
         if(atom == `→`){
             Doc.append(node(`<span class="arrow" >→</span>`));
         }else if(atom ==`←`){
@@ -441,6 +441,7 @@ Alt/Ctrl/Shift + ← : Input ←
 Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
 }
+
 
 
 
