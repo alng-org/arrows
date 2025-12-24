@@ -4,13 +4,15 @@ function node(html){
 }
 function doc(src){
     let Doc=document.createDocumentFragment();
-    for(let atom of src.match(/[\{\[\(→←\)\]\}]|[^\{\[\(→←\)\]\}]+/g) ?? []){
-        if(atom == `→`){
+    for(let atom of src.match(/[\{\[\(→←\)\]\}0-9]|[^\{\[\(→←\)\]\}0-9]+/g) ?? []){
+        if(atom === `→`){
             Doc.append(node(`<span class="arrow" >→</span>`));
-        }else if(atom ==`←`){
+        }else if(atom ===`←`){
             Doc.append(node(`<span class="varrow" >←</span>`));
         }else if(`{}[]()`.includes(atom)){
             Doc.append(node(`<span class="quote" >${atom}</span>`));
+        }else if(/^[0-9]$/.test(atom)){
+            Doc.append(node(`<span class="num" >${atom}</span>`));
         }else if(atom == `\n`){
             Doc.append(node(`<br>`));
         }else{
@@ -441,6 +443,7 @@ Alt/Ctrl/Shift + ← : Input ←
 Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
 }
+
 
 
 
