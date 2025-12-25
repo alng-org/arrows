@@ -445,16 +445,3 @@ Alt/Ctrl/Shift + ← : Input ←
 Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
