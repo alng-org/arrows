@@ -2,6 +2,31 @@ function node(html){
     let range = document.createRange();
     return range.createContextualFragment(html);
 }
+
+let keywords = (code) =>{
+    const kw = new Highlight();
+    CSS.highlights.set("keyword",kw);
+    let kws = new Set();
+    return (keyword = null) =>{
+        if(keyword !== null){
+            kws.add(keyword);
+        }else{
+            //PASS
+        }
+        kw.clear(); //clean highlight
+        for(let text of 
+            [...code.childNodes].filter(
+                t => t.nodeName === "#text"
+            )
+           ){
+            //highligh core
+        }
+    }
+};
+
+
+
+
 function doc(src){
     let Doc=document.createDocumentFragment();
     for(let atom of src.match(/[\{\[\(→←\)\]\}0-9[\p{ASCII}&&[\p{S}\p{P}]]]|[^\{\[\(→←\)\]\}0-9[\p{ASCII}&&[\p{S}\p{P}]]]+/gv) ?? []){
@@ -388,6 +413,7 @@ function init(code,toolbar){
     code.addEventListener("focus",event => focus(event,code));
     document.addEventListener("selectionchange",event => selectionchange(event,code)); // selectionchange is base on document specialy
     window.visualViewport.addEventListener("resize",event => resize(event,code)); // resize is base on window.visualViewport
+    keywords(code); //prepare keywords highlight
     //==============
     let key_frame=document.styleSheets[0].cssRules[1]; //@key_frame arrow_animi
     for(let i=0;i<=100;i=i+1){
@@ -445,3 +471,4 @@ Alt/Ctrl/Shift + ← : Input ←
 Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
 }
+
