@@ -82,7 +82,7 @@ class map{
             this.#map=[];
             this.#err_info=``;
         }else{
-            let atom_list=src.match(/\{|\[|\(|→|←|\)|\]|\}|[^\{\[\(→←\)\]\}]+/g);
+            let atom_list=src.match(/[\{\[\(→←\)\]\}]|[^\{\[\(→←\)\]\}]+/g);
             let a_map=
             atom_list.reduce((m,atom)=>{
                 let atom_element=map.#farrow(atom);
@@ -179,4 +179,5 @@ function type(val){
     }else{
         return `?`;
     }
+
 }
