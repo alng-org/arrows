@@ -47,7 +47,7 @@
             background-color: gray;
         }
         .num{
-            color:plum;
+            color:peachpuff;
         }
         .sym{
             color:lightsalmon;
@@ -58,11 +58,16 @@
         :is(.arrow,.varrow)::selection{
             color:red; //maybe it can be better
         }
-        #code{
+        #code,#toolbar>button{
             font-family:math;
             font-size:1.5rem;
-            background-color:black;
             color:darkcyan;
+        }
+
+
+        
+        #code{
+            background-color:black;
             caret-color: aquamarine;
             outline:none;
             margin:0;
@@ -101,11 +106,8 @@
                 box-sizing: border-box;
             }
             #toolbar>button{
-                font-family:math;
-                font-size:1.5rem;
                 text-align:center;
                 user-select:none;
-                color:darkcyan;
                 background-color:burlywood;
                 border:none;
                 margin:0;
@@ -129,6 +131,7 @@
     <div id="code" contenteditable="true"><br class="Not_Text"></div>
     <div id="toolbar"></div>
 </body>
+
 
 
 
