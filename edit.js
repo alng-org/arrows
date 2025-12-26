@@ -8,11 +8,20 @@ let keywords = (code) =>{
     CSS.highlights.set("keyword",kw);
     let kws = new Set();
     return (keyword = null) =>{
-        if(keyword !== null){
+        
+        if(keyword !== null && /^\p{L}+$/v.test(keyword) === true){
             kws.add(keyword);
         }else{
             //PASS
         }
+
+
+
+
+
+
+
+        
         kw.clear(); //clean highlight
         for(let text of 
             [...code.childNodes].filter(
@@ -471,4 +480,5 @@ Alt/Ctrl/Shift + ← : Input ←
 Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
 }
+
 
