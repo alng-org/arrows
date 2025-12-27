@@ -319,14 +319,14 @@ function edit_pair(empty_pair){
     after_edit();
 }
 function keydown(event) {
-    if((event.ctrlKey || event.altKey || event.shiftKey)){
+    if(event.ctrlKey || event.altKey){
         if(/(Arrow)?Right/.test(event.key)){
             event.preventDefault();
             edit_arrow();
         }else if(/(Arrow)?Left/.test(event.key)){
             event.preventDefault();
             edit_varrow();
-        }else if((event.ctrlKey || event.altKey ) && /Q|q/.test(event.key)){
+        }else if(/Q|q/.test(event.key)){
             event.preventDefault();
             expand_sel();
         }else{
@@ -475,10 +475,11 @@ function init(code,toolbar){
 ( : Input ()
 [ : Input []
 { : Input {}
-Alt/Ctrl/Shift + → : Input →
-Alt/Ctrl/Shift + ← : Input ←
+Alt/Ctrl + → : Input →
+Alt/Ctrl + ← : Input ←
 Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
 }
+
 
 
