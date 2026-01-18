@@ -345,11 +345,11 @@ function keydown(event) {
 function beforeinput(event) {
     if(/insertText/.test(event.inputType)){
         event.preventDefault();
-        if(/\(/.test(event.data)){
+        if(/^\($/.test(event.data)){
             edit_pair(`()`);
-        }else if(/\[/.test(event.data)){
+        }else if(/^\[$/.test(event.data)){
             edit_pair(`[]`);
-        }else if(/\{/.test(event.data)){
+        }else if(/^\{$/.test(event.data)){
             edit_pair(`{}`);
         }else{
             edit(event.data);
@@ -480,6 +480,7 @@ Alt/Ctrl + ← : Input ←
 Alt/Ctrl + Q/q : Expand selection to the next outer (), [], or {}
 `);
 }
+
 
 
 
