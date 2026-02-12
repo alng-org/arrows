@@ -479,7 +479,7 @@ class core_edit{
         let sel= core_edit.get_sel();
         sel.deleteContents();
         let node = document.createElement("span");
-        node.innerText = "&zwnj";
+        node.innerText = "\u200c";
         sel.insertNode(node);
         sel.selectNodeContents(node);
 
