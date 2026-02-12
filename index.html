@@ -11,62 +11,62 @@
     interactive-widget=resizes-content"
 >
 <head>
+    <script src="core_edit.js"></script>
     <script src="edit.js"></script>
-    <script src="kernel.js"></script>
     <title>a Language</title>
     <link rel="icon" href="favicon.ico"/>
     <style>
-        .arrow,.varrow{
-            background-clip: text;
-            -webkit-background-clip: text;
-            color:transparent;
-            font-weight:bold;
-            animation-name: arrow_animi;
-            animation-duration: 3s;
-            animation-iteration-count: infinite;
-        }
-        @keyframes arrow_animi{
-            /*See it at function init at edit.js*/
-        }
-        .varrow{
-            animation-direction: reverse;
-        }
-        .quote_0{
+
+        ::highlight(quote_0){
             color: goldenrod;
         }
-        .quote_1{
+
+        ::highlight(quote_1){
             color: lavender;
         }
-        .quote_2{
+
+        ::highlight(quote_2){
             color: violet;
         }
-        .quote_unpair{
+
+        ::highlight(quote_unpair){
             color: darkred;
         }
-        .quote_current_pair{
+
+        ::highlight(quote_current_pair){
             background-color: gray;
         }
-        .num{
-            color:rosybrown;
+
+        ::highlight(text_core){
+            color: chocolate;
         }
-        .sym{
+
+        ::highlight(text_const){
+            color: cadetblue;
+        }
+
+        ::highlight(text_other){
+            color: mediumpurple;
+        }
+
+        ::highlight(keyword){
             color:dodgerblue;
         }
-        ::highlight(keyword){
-            color:darkslateblue;
+
+        ::highlight(arrow){
+            color: red;
         }
-        
+
         *::selection{
             background-color:darkslategray;
         }
-        :is(.arrow,.varrow)::selection{
-            color:red; //maybe it can be better
-        }
+
         #code,#toolbar>button{
             font-family:math;
             font-size:1.5rem;
-            color:seagreen;
+            color:wheat;
         }
+
         #code{
             background-color:black;
             caret-color: snow;
@@ -116,6 +116,7 @@
                 box-sizing: border-box;
             }
         }
+
         body{
             display:flex;
             flex-direction:column;
@@ -131,7 +132,3 @@
     <div id="code" contenteditable="true"><br class="Not_Text"></div>
     <div id="toolbar"></div>
 </body>
-
-
-
-
