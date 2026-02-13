@@ -159,10 +159,6 @@ class core_edit{
                     range.endContainer,
                     range.endOffset
                 );
-
-                alert(common_range);
-                alert(1);
-
                 
                 return core_edit.#tree_render(
                     {
@@ -679,6 +675,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
