@@ -232,6 +232,7 @@ class core_edit{
                                 normal_content_pusher(parent);
                                 unpaired_brakets_pusher(parent);
                             }
+                            array_unpaired_brakets.pop(); //pop this_braket
 
                             return core_edit.#tree_render(root);
                         }
@@ -655,5 +656,6 @@ class core_edit{
             this.#insert(right,true,true);
         }
     }
+
 
 }
