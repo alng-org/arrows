@@ -140,10 +140,12 @@ class core_edit{
         }
     }
 
+    static #zero_range = new Range(); //common collapsed range
     static #tree_render(
         tree_node = {
             contents: "",
-            contents_range: null,
+            contents_range: core_edit.#zero_range,
+            range_extend: (range) => range.cloneRange(),
             normal_ranges: [],
             level_info: {
                 level: -1,
@@ -154,47 +156,43 @@ class core_edit{
     ){
         return {
             append_content: ({content,range}) => {
-                let common_range = tree_node.contents_range ?? range.cloneRange();
-                common_range.setEnd(
-                    range.endContainer,
-                    range.endOffset
-                );
+                let common_range = tree_node.range_extend(range);
                 
                 return core_edit.#tree_render(
                     {
                         contents: tree_node.contents + content,
                         contents_range: common_range,
+                        range_extend: (_range) => {
+                            common_range.setEnd(
+                                _range.endContainer,
+                                _range.endOffset
+                            );
+                            return common_range;
+                        },
                         normal_ranges: tree_node.normal_ranges,
                         level_info: tree_node.level_info
                     }
                 );
             },
 
-            determine_normal: () => {
-                let normal_ranges = [
-                    ...tree_node.normal_ranges
-                ];
-                if(tree_node.contents_range === null){
-                    //pass
-                }else{
-                    normal_ranges.push(
-                        tree_node.contents_range
-                    );
+            determine_normal: () => core_edit.#tree_render(
+                {
+                    contents: "",
+                    contents_range: core_edit.#zero_range,
+                    range_extend: (range) => range.cloneRange(),
+                    normal_ranges: [
+                        ...tree_node.normal_ranges,
+                        tree_node.contents_range,
+                    ],
+                    level_info: tree_node.level_info
                 }
-                return core_edit.#tree_render(
-                    {
-                        contents: "",
-                        contents_range: null,
-                        normal_ranges: normal_ranges,
-                        level_info: tree_node.level_info
-                    }
-                );
-            },
+            ),
 
             braket_await_paired: (braket) => core_edit.#tree_render(
                 {
                     contents: "",
-                    contents_range: null,
+                    contents_range: core_edit.#zero_range,
+                    range_extend: (range) => range.cloneRange(),
                     normal_ranges: [],
                     level_info: {
                         level: tree_node.level_info.level + 1,
@@ -231,16 +229,10 @@ class core_edit{
                             );
                             
                             let normal_content_pusher = (this_level) => {
-                                if(this_level.contents_range === null){
-                                    array_normal_content.push(
-                                        ...this_level.normal_ranges
-                                    );
-                                }else{
-                                    array_normal_content.push(
-                                        this_level.contents_range,
-                                        ...this_level.normal_ranges
-                                    );
-                                }
+                                array_normal_content.push(
+                                    this_level.contents_range,
+                                    ...this_level.normal_ranges
+                                );
                             };
 
                             let unpaired_brakets_pusher = (this_level) => {
@@ -272,7 +264,8 @@ class core_edit{
                 return core_edit.#tree_render(
                     {
                         contents: "",
-                        contents_range: null,
+                        contents_range: core_edit.#zero_range,
+                        range_extend: (range) => range.cloneRange(),
                         normal_ranges: tree_node.normal_ranges,
                         level_info: tree_node.level_info
                     }
@@ -683,3 +676,4 @@ class core_edit{
         }
     }
 }
+
