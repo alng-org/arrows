@@ -154,16 +154,14 @@ class core_edit{
     ){
         return {
             append_content: ({content,range}) => {
-                let common_range = (
-                    tree_node.contents_range ?? 
-                    range.cloneRange()
-                );
+                let common_range = tree_node.contents_range ?? range.cloneRange();
                 common_range.setEnd(
                     range.endContainer,
                     range.endOffset
                 );
 
                 alert(common_range);
+                alert(1);
 
                 
                 return core_edit.#tree_render(
@@ -681,5 +679,6 @@ class core_edit{
         }
     }
 }
+
 
 
