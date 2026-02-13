@@ -257,7 +257,7 @@ class core_edit{
                             }
                             array_unpaired_brakets.pop(); //pop this_braket
 
-                            return root.determine_normal();
+                            return core_edit.#tree_render(root).determine_normal();
                         }
                     };
                 }
@@ -683,6 +683,3 @@ class core_edit{
         }
     }
 }
-
-
-
