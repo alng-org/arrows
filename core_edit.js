@@ -143,7 +143,7 @@ class core_edit{
     static #tree_render(
         tree_node = {
             contents: "",
-            contents_ranges: [],
+            contents_range: null,
             normal_ranges: [],
             level_info: {
                 level: -1,
@@ -153,22 +153,32 @@ class core_edit{
         }
     ){
         return {
-            append_content: ({content,range}) => core_edit.#tree_render(
-                {
-                    contents: tree_node.contents + content,
-                    contents_ranges: [...tree_node.contents_ranges,range],
-                    normal_ranges: tree_node.normal_ranges,
-                    level_info: tree_node.level_info
-                }
-            ),
+            append_content: ({content,range}) => {
+                let common_range = (
+                    tree_node.contents_range ?? 
+                    range.cloneRange()
+                );
+                common_range.setEnd(
+                    range.endContainer,
+                    range.endOffset
+                );
+                return core_edit.#tree_render(
+                    {
+                        contents: tree_node.contents + content,
+                        contents_range: common_range,
+                        normal_ranges: tree_node.normal_ranges,
+                        level_info: tree_node.level_info
+                    }
+                );
+            },
 
             determine_normal: () => core_edit.#tree_render(
                 {
                     contents: "",
-                    contents_ranges: [],
+                    contents_range: null,
                     normal_ranges: [
                         ...tree_node.normal_ranges,
-                        ...tree_node.contents_ranges
+                        tree_node.contents_range
                     ],
                     level_info: tree_node.level_info
                 }
@@ -177,7 +187,7 @@ class core_edit{
             braket_await_paired: (braket) => core_edit.#tree_render(
                 {
                     contents: "",
-                    contents_ranges: [],
+                    contents_range: null,
                     normal_ranges: [],
                     level_info: {
                         level: tree_node.level_info.level + 1,
@@ -215,7 +225,7 @@ class core_edit{
                             
                             let normal_content_pusher = (this_level) => {
                                 array_normal_content.push(
-                                    ...this_level.contents_ranges,
+                                    this_level.contents_range,
                                     ...this_level.normal_ranges
                                 );
                             };
@@ -243,12 +253,12 @@ class core_edit{
 
             highlight_content: (array) => {
                 array.push(
-                    ...tree_node.contents_ranges
+                    tree_node.contents_range
                 );
                 return core_edit.#tree_render(
                     {
                         contents: "",
-                        contents_ranges: [],
+                        contents_range: null,
                         normal_ranges: tree_node.normal_ranges,
                         level_info: tree_node.level_info
                     }
@@ -261,7 +271,9 @@ class core_edit{
                     node.level_info.level >= 0;
                     node = node.level_info.parent
                 ){
-                    array_unpaired_brakets.push(node.level_info.braket.range);
+                    array_unpaired_brakets.push(
+                        node.level_info.braket.range
+                    );
                 }
                 return null; //finally operator
             },
@@ -659,3 +671,4 @@ class core_edit{
 
 
 }
+
