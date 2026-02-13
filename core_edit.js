@@ -246,7 +246,10 @@ class core_edit{
                                 {
                                     contents: "",
                                     contents_range: null,
-                                    normal_ranges: root.normal_ranges,
+                                    normal_ranges: [
+                                        ...root.normal_ranges,
+                                        root.contents_range
+                                    ],
                                     level_info:root.level_info
                                 }
                             );
@@ -675,7 +678,3 @@ class core_edit{
         }
     }
 }
-
-
-
-
