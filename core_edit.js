@@ -244,7 +244,14 @@ class core_edit{
                             }
                             array_unpaired_brakets.pop(); //pop this_braket
 
-                            return core_edit.#tree_render(root);
+                            return core_edit.#tree_render(
+                                {
+                                    contents: "",
+                                    contents_range: null,
+                                    normal_ranges: root.normal_ranges,
+                                    level_info:root.level_info
+                                }
+                            );
                         }
                     };
                 }
@@ -668,7 +675,4 @@ class core_edit{
             this.#insert(right,true,true);
         }
     }
-
-
 }
-
