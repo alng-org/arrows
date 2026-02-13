@@ -401,6 +401,9 @@ class core_edit{
                             highlights.get(this.#braket_unpaired_class)
                         );
 
+
+                        alert(tree_render);
+
                         maybe_braket_await_paired = () => undefined;
 
                         if(
@@ -678,3 +681,4 @@ class core_edit{
         }
     }
 }
+
