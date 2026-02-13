@@ -170,17 +170,26 @@ class core_edit{
                 );
             },
 
-            determine_normal: () => core_edit.#tree_render(
-                {
-                    contents: "",
-                    contents_range: null,
-                    normal_ranges: [
-                        ...tree_node.normal_ranges,
+            determine_normal: () => {
+                let normal_ranges = [
+                    ...tree_node.normal_ranges
+                ];
+                if(tree_node.contents_range === null){
+                    //pass
+                }else{
+                    normal_ranges.push(
                         tree_node.contents_range
-                    ],
-                    level_info: tree_node.level_info
+                    );
                 }
-            ),
+                return core_edit.#tree_render(
+                    {
+                        contents: "",
+                        contents_range: null,
+                        normal_ranges: normal_ranges,
+                        level_info: tree_node.level_info
+                    }
+                );
+            },
 
             braket_await_paired: (braket) => core_edit.#tree_render(
                 {
@@ -222,10 +231,16 @@ class core_edit{
                             );
                             
                             let normal_content_pusher = (this_level) => {
-                                array_normal_content.push(
-                                    this_level.contents_range,
-                                    ...this_level.normal_ranges
-                                );
+                                if(this_level.contents_range === null){
+                                    array_normal_content.push(
+                                        ...this_level.normal_ranges
+                                    );
+                                }else{
+                                    array_normal_content.push(
+                                        this_level.contents_range,
+                                        ...this_level.normal_ranges
+                                    );
+                                }
                             };
 
                             let unpaired_brakets_pusher = (this_level) => {
@@ -242,17 +257,7 @@ class core_edit{
                             }
                             array_unpaired_brakets.pop(); //pop this_braket
 
-                            return core_edit.#tree_render(
-                                {
-                                    contents: "",
-                                    contents_range: null,
-                                    normal_ranges: [
-                                        ...root.normal_ranges,
-                                        root.contents_range
-                                    ],
-                                    level_info:root.level_info
-                                }
-                            );
+                            return root.determine_normal();
                         }
                     };
                 }
@@ -678,5 +683,6 @@ class core_edit{
         }
     }
 }
+
 
 
