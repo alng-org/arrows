@@ -162,6 +162,10 @@ class core_edit{
                     range.endContainer,
                     range.endOffset
                 );
+
+                alert(common_range);
+
+                
                 return core_edit.#tree_render(
                     {
                         contents: tree_node.contents + content,
@@ -262,12 +266,6 @@ class core_edit{
                 array.push(
                     tree_node.contents_range
                 );
-
-                
-                alert(tree_node.content_range);
-
-
-
                 
                 return core_edit.#tree_render(
                     {
@@ -683,4 +681,5 @@ class core_edit{
         }
     }
 }
+
 
