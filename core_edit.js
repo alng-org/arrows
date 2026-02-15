@@ -64,7 +64,7 @@ class core_edit{
     }
 
     static #highlights(class_name,range_list){
-        let highlight = new Highlight(...range_list);
+        let highlight = new Highlight(range_list);
         CSS.highlights.set(class_name,highlight);
     }
     
@@ -76,8 +76,9 @@ class core_edit{
         );
     }
 
+    static #und_segmenter = new Intl.Segmenter('und');
     static *#graphemes(str,grapheme_int_set){
-        for(let grapheme of new Intl.Segmenter('und').segment(str) ){
+        for(let grapheme of core_edit.#und_segmenter.segment(str) ){
             if(int_set.has(grapheme.segment)){
                 yield grapheme;
             }else{
@@ -152,13 +153,11 @@ class core_edit{
     }
 
     #core_shader(){
-        let highlights = this.#highlights_map();
-        core_edit.#clear_highlights_in(this.#classes);
-
         let vertex = []; //ranges directy belongs current brakets
-
-
-
+        
+        let highlights = this.#highlights_map();
+        let highlight = [];
+        core_edit.#clear_highlights_in(this.#classes);
         
         let expect = []; //brakets expected
         let ranges = []; //associated ranges to brakets
@@ -174,31 +173,28 @@ class core_edit{
                 //highlights brakets
                 highlights.get(
                     this.#braket_paired_class[
-                        index % this.#braket_paired_class
+                        index % this.#braket_paired_class.length
                     ]
                 ).push(
                     ranges[index],
                     range
                 );
 
-                //highlights text in brakets
+                //highlights text directly belongs brakets
+                highlight = highlights.get(
+                    this.#brakets_class(content)
+                );
                 ranges[last_index + 1] = range;
-                for(let i = index; i<= last_index; i = i + 1){
+                for(let i = index; i <= last_index; i = i + 1){
                     ranges[i].collapse(false);
                     ranges[i].setEnd(
                         ranges[i + 1].startContainer,
                         ranges[i + 1].startOffset
                     );
+                    highlight.push(ranges[i]);
                 }
-                
 
-
-
-
-
-
-
-                
+                //highlight current pair brakets
                 if(
                     vertex.length === 0 &&
                     core_edit.#in_paired(
@@ -212,26 +208,27 @@ class core_edit{
                         ranges[index],
                         range
                     );
+                    for(let i = index; i <= last_index; i = i + 1){
+                        vertex[i] = ranges[i];
+                    }
+                }else{
+                    //pass
                 }
 
-
-
-                
-
+                //logic remove
+                last_index = index - 1;
                 
             }
         }
-
-
-        return vertex;
         
+        for(let [clazz,lst] of highlights){
+            core_edit.#highlights(clazz,lst);
+        }
+        
+        this.visible_sel();
+        
+        return vertex;
     }
-
-
-
-
-
-    
 
     #assert_brakets(brakets){
         if(
@@ -257,18 +254,6 @@ class core_edit{
         }else{
             return false;
         }
-    }
-
-    #is_braket(ch){
-        return this.#brakets_set.has(ch);
-    }
-
-    #class_for(braket){
-        return this.#brakets_class.get(braket);
-    }
-
-    #expect_for(braket){
-        return this.#brakets_map.get(braket);
     }
 
     #indent(){
@@ -306,8 +291,8 @@ class core_edit{
     }
 
     #render(){
-
-        this.visible_sel();
+        let vertex = this.#core_shader();
+        
     }
 
     #keydown(event) {
@@ -530,6 +515,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
