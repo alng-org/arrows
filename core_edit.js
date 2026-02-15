@@ -188,7 +188,7 @@ class core_edit{
                     this.#brakets_class.get(content)
                 );
                 ranges[last_index + 1] = range;
-                for(let i = index + 1; i <= last_index + 1; i = i + 1){
+                for(let i = last_index + 1; i >= index + 1; i = i - 1){
                     ranges[i] = new StaticRange(
                         {
                             startContainer: ranges[i - 1].endContainer,
@@ -531,3 +531,4 @@ class core_edit{
         }
     }
 }
+
