@@ -77,7 +77,8 @@ class core_edit{
     }
 
     static #und_segmenter = new Intl.Segmenter('und');
-    static *#graphemes(str,grapheme_int_set){
+    static #grapheme_all_set = { has: (c) => true };
+    static *#graphemes(str,grapheme_int_set = core_edit.#grapheme_all_set){
         for(let grapheme of core_edit.#und_segmenter.segment(str) ){
             if(int_set.has(grapheme.segment)){
                 yield grapheme;
@@ -523,6 +524,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
