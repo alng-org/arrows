@@ -160,10 +160,14 @@ class core_edit{
         
         let highlights = this.#highlights_map();
         let highlight = [];
+        let highlight_unpair = highlights.get(
+            this.#braket_unpaired_class
+        );
         core_edit.#clear_highlights_in(this.#classes);
         
         let expect = []; //brakets expected
         let ranges = []; //associated ranges to brakets
+        let range_index = null;
         let index = -1;
         let last_index = -1;
         for(let {content,range} of core_edit.#walker(this.#node,this.#brakets_set)){
@@ -173,13 +177,15 @@ class core_edit{
                 expect[last_index] = this.#brakets_map.get(content) ?? "";
                 ranges[last_index] = range;
             }else{
+                range_index = ranges[index];
+                
                 //highlights brakets
                 highlights.get(
                     this.#braket_paired_class[
                         index % this.#braket_paired_class.length
                     ]
                 ).push(
-                    ranges[index],
+                    range_index,
                     range
                 );
 
@@ -188,15 +194,22 @@ class core_edit{
                     this.#brakets_class.get(content)
                 );
                 ranges[last_index + 1] = range;
-                for(let i = last_index + 1; i >= index + 1; i = i - 1){
+                for(let i = index; i <= last_index; i = i + 1){
+                    if(expect[i] === ""){
+                        highlight_unpair.push(ranges[i]);
+                    }else{
+                        //pass
+                    }
+                    
                     ranges[i] = new StaticRange(
                         {
-                            startContainer: ranges[i - 1].endContainer,
-                            startOffset: ranges[i - 1].endOffset,
-                            endContainer: ranges[i].startContainer,
-                            endOffset: ranges[i].startOffset
+                            startContainer: ranges[i].endContainer,
+                            startOffset: ranges[i].endOffset,
+                            endContainer: ranges[i + 1].startContainer,
+                            endOffset: ranges[i + 1].startOffset
                         }
                     );
+                    
                     highlight.push(ranges[i]);
                 }
 
@@ -204,39 +217,48 @@ class core_edit{
                 if(
                     vertex.length === 0 &&
                     core_edit.#in_paired(
-                        ranges[index],
+                        range_index,
                         range
                     )
                 ){
                     highlights.get(
                         this.#braket_current_paired_class
                     ).push(
-                        ranges[index],
+                        range_index,
                         range
                     );
                     this.#current_pair = [
-                        ranges[index],
+                        range_index,
                         range
                     ];
-                    for(let i = index + 1; i <= last_index + 1; i = i + 1){
-                        vertex[i - index - 1] = ranges[i];
-                    }
+
+                    vertex = ranges.slice(index, last_index + 1); 
+                    //ranges[index] ~ ranges[last_index]
+                    
                 }else{
                     //pass
                 }
 
+                //logic pending
+                expect[index] = "..";
+                ranges[index] = new StaticRange(
+                    {
+                        startContainer: range_index.startContainer,
+                        startOffset: range_index.startOffset,
+                        endContainer: range.endContainer,
+                        endOffset: range.endOffset
+                    }
+                );
+
                 //logic remove
-                last_index = index - 1;
+                last_index = index;
                 
             }
         }
 
         //highlight unpaired brakets
-        highlight = highlights.get(
-            this.#braket_unpaired_class
-        );
         for(let i = 0; i <= last_index; i = i + 1){
-            highlight.push( ranges[i] );
+            highlight_unpair.push( ranges[i] );
         }
         
         for(let [clazz,lst] of highlights){
@@ -531,4 +553,5 @@ class core_edit{
         }
     }
 }
+
 
