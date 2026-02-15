@@ -512,14 +512,12 @@ class core_edit{
     }
 
     insert_with_paired(str){
-        let paired = this.#brakets.find(
-            ([l,_,r]) => l === str || r === str
-        );
+        let right = this.#brakets_map.get(str) ?? "";
 
-        if(paired === undefined){
+        if(right === ""){
             this.#insert(str);
         }else{
-            let [left,_,right] = paired;
+            let left = str;
             let sel = core_edit.get_sel();
             let content= core_edit.src( sel.cloneContents() );
             this.#insert(left,false);
@@ -528,13 +526,3 @@ class core_edit{
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
