@@ -252,7 +252,7 @@ class core_edit{
             )
         ){
             let brakets_pair = brakets.map( ([L,_,R]) => [L,R] );
-            let flat_brakets = brakets.flat();
+            let flat_brakets = brakets_pair.flat();
 
             
             this.#brakets_set = new Set(flat_brakets);
@@ -526,4 +526,5 @@ class core_edit{
         }
     }
 }
+
 
