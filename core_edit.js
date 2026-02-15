@@ -48,8 +48,9 @@ class core_edit{
                 ...this.#brakets_class.values()
             ];
             
-            let classes_pair = this.#classes.map( (t) => [t,[]] );
-            this.#highlights_map = () => new Map(classes_pair);
+            this.#highlights_map = () => new Map(
+                this.#classes.map( (t) => [t,[]] )
+            );
             
             this.#content_class = content_class;
             this.#init();
@@ -527,6 +528,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
