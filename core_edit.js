@@ -47,6 +47,17 @@ class core_edit{
                 this.#braket_current_paired_class,
                 ...this.#brakets_class.values()
             ];
+
+            alert(
+                JSON.stringify(
+                    this.#classes
+                    ));
+
+
+
+
+
+            
             let classes_pair = this.#classes.map( (t) => [t,[]] );
             this.#highlights_map = () => new Map(classes_pair);
             
@@ -526,6 +537,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
