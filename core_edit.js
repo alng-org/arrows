@@ -154,16 +154,22 @@ class core_edit{
     #core_shader(){
         let highlights = this.#highlights_map();
         core_edit.#clear_highlights_in(this.#classes);
-        let expect = [];
-        let ranges = [];
+
+        let vertex = []; //ranges directy belongs current brakets
+
+
+
+        
+        let expect = []; //brakets expected
+        let ranges = []; //associated ranges to brakets
         let index = -1;
+        let last_index = -1;
         for(let {content,range} of core_edit.#walker(this.#node,this.#brakets_set)){
-            index = expect.lastIndexOf(content);
+            index = expect.lastIndexOf(content,last_index);
             if(index === -1){ //no found
-                expect.push(
-                    this.#brakets_map.get(content) ?? ""
-                );
-                ranges.push( range );
+                last_index = last_index + 1;
+                expect[last_index] = this.#brakets_map.get(content) ?? "";
+                ranges[last_index] = range;
             }else{
                 //highlights brakets
                 highlights.get(
@@ -176,10 +182,48 @@ class core_edit{
                 );
 
                 //highlights text in brakets
+                ranges[last_index + 1] = range;
+                for(let i = index; i<= last_index; i = i + 1){
+                    ranges[i].collapse(false);
+                    ranges[i].setEnd(
+                        ranges[i + 1].startContainer,
+                        ranges[i + 1].startOffset
+                    );
+                }
+                
+
+
+
+
+
+
+
+                
+                if(
+                    vertex.length === 0 &&
+                    core_edit.#in_paired(
+                        ranges[index],
+                        range
+                    )
+                ){
+                    highlights.get(
+                        this.#braket_current_paired_class
+                    ).push(
+                        ranges[index],
+                        range
+                    );
+                }
+
+
+
+                
 
                 
             }
         }
+
+
+        return vertex;
         
     }
 
@@ -486,6 +530,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
