@@ -191,8 +191,8 @@ class core_edit{
                 for(let i = index + 1; i <= last_index + 1; i = i + 1){
                     ranges[i] = new StaticRange(
                         {
-                            startContainer: range[i - 1].endContainer,
-                            startOffset: range[i - 1].endOffset,
+                            startContainer: ranges[i - 1].endContainer,
+                            startOffset: ranges[i - 1].endOffset,
                             endContainer: ranges[i].startContainer,
                             endOffset: ranges[i].startOffset
                         }
@@ -219,7 +219,7 @@ class core_edit{
                         range
                     ];
                     for(let i = index + 1; i <= last_index + 1; i = i + 1){
-                        vertex[i] = ranges[i];
+                        vertex[i - index - 1] = ranges[i];
                     }
                 }else{
                     //pass
@@ -531,10 +531,3 @@ class core_edit{
         }
     }
 }
-
-
-
-
-
-
-
