@@ -188,11 +188,14 @@ class core_edit{
                     this.#brakets_class.get(content)
                 );
                 ranges[last_index + 1] = range;
-                for(let i = index; i <= last_index; i = i + 1){
-                    ranges[i].collapse(false);
-                    ranges[i].setEnd(
-                        ranges[i + 1].startContainer,
-                        ranges[i + 1].startOffset
+                for(let i = index + 1; i <= last_index + 1; i = i + 1){
+                    ranges[i] = new StaticRange(
+                        {
+                            startContainer: range[i - 1].endContainer,
+                            startOffset: range[i - 1].endOffset,
+                            endContainer: ranges[i].startContainer,
+                            endOffset: ranges[i].startOffset
+                        }
                     );
                     highlight.push(ranges[i]);
                 }
@@ -215,7 +218,7 @@ class core_edit{
                         ranges[index],
                         range
                     ];
-                    for(let i = index; i <= last_index; i = i + 1){
+                    for(let i = index + 1; i <= last_index + 1; i = i + 1){
                         vertex[i] = ranges[i];
                     }
                 }else{
@@ -528,6 +531,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
