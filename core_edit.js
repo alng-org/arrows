@@ -165,7 +165,19 @@ class core_edit{
                 );
                 ranges.push( range );
             }else{
-                //??
+                //highlights brakets
+                highlights.get(
+                    this.#braket_paired_class[
+                        index % this.#braket_paired_class
+                    ]
+                ).push(
+                    ranges[index],
+                    range
+                );
+
+                //highlights text in brakets
+
+                
             }
         }
         
@@ -474,6 +486,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
