@@ -1,9 +1,13 @@
 class core_edit{
     #node;
-    #brakets; 
+    #brakets_set; //all L,R
+    #brakets_map; // L -> R
+    #brakets_class; // R -> C
     #braket_unpaired_class;
     #braket_paired_class;
     #braket_current_paired_class;
+    #classes; // all determined class
+    #highlights_map; //supplier
     #content_class;
     #current_pair = null;
     /**
@@ -31,12 +35,21 @@ class core_edit{
         braket_current_paired_class,
         content_class
     ){
-        if(core_edit.#assert_brakets(brakets)){
+        if(this.#assert_brakets(brakets)){
             this.#node = node;
-            this.#brakets = brakets;
             this.#braket_unpaired_class = braket_unpaired_class;
             this.#braket_paired_class = braket_paired_class;
             this.#braket_current_paired_class = braket_current_paired_class;
+
+            this.#classes = [
+                this.#braket_unpaired_class,
+                ...this.#braket_paired_class,
+                this.#braket_current_paired_class,
+                ...this.#brakets_class.values()
+            ];
+            let classes_pair = this.#classes.map( (t) => [t,[]] );
+            this.#highlights_map = () => new Map(classes_pair);
+            
             this.#content_class = content_class;
             this.#init();
         }else{
@@ -44,24 +57,17 @@ class core_edit{
         }
     }
 
-    static #assert_brakets(brakets){
-        if(
-            (brakets instanceof Array) && (brakets.length >= 1) &&
-            brakets.every( 
-                (paired) => (paired instanceof Array) && (paired.length === 3) &&
-                                       paired.every((t) => typeof(t) === "string")
-            )
-        ){
-            let flat_brakets = brakets.flatMap(([L,_,R]) => [L,R] );
-            let set_brakets = new Set(flat_brakets);
-            return flat_brakets.every( 
-                 (t) => [...core_edit.#graphemes(t)].length === 1
-            ) && set_brakets.size === flat_brakets.length;
-        }else{
-            return false;
+    static #clear_highlights_in(classes){
+        for(let clazz of classes){
+            CSS.highlights.delete(clazz);
         }
     }
 
+    static #highlights(class_name,range_list){
+        let highlight = new Highlight(...range_list);
+        CSS.highlights.set(class_name,highlight);
+    }
+    
     static #in_paired(left,right){
         let sel = core_edit.get_sel();
         return (
@@ -140,179 +146,42 @@ class core_edit{
         }
     }
 
-    static #zero_range = new Range(); //common collapsed range
-    static #tree_render(
-        tree_node = {
-            contents: "",
-            contents_range: core_edit.#zero_range,
-            range_extend: (range) => range.cloneRange(),
-            normal_ranges: [],
-            level_info: {
-                level: -1,
-                braket: null,
-                parent: null
-            }
+    #assert_brakets(brakets){
+        if(
+            (brakets instanceof Array) && (brakets.length >= 1) &&
+            brakets.every( 
+                (paired) => (paired instanceof Array) && (paired.length === 3) &&
+                                       paired.every((t) => typeof(t) === "string")
+            )
+        ){
+            let brakets_pair = brakets.map( ([L,_,R]) => [L,R] );
+            let flat_brakets = brakets.flat();
+
+            
+            this.#brakets_set = new Set(flat_brakets);
+            this.#brakets_map = new Map(brakets_pair);
+            this.#brakets_class = new Map(
+                brakets.map( ([_,C,R]) => [R,C] )
+            );
+            
+            return flat_brakets.every( 
+                 (t) => [...core_edit.#graphemes(t)].length === 1
+            ) && this.#brakets_set.size === flat_brakets.length;
+        }else{
+            return false;
         }
-    ){
-        return {
-            append_content: ({content,range}) => {
-                let common_range = tree_node.range_extend(range);
-                
-                return core_edit.#tree_render(
-                    {
-                        contents: tree_node.contents + content,
-                        contents_range: common_range,
-                        range_extend: (_range) => {
-                            common_range.setEnd(
-                                _range.endContainer,
-                                _range.endOffset
-                            );
-                            return common_range;
-                        },
-                        normal_ranges: tree_node.normal_ranges,
-                        level_info: tree_node.level_info
-                    }
-                );
-            },
-
-            determine_normal: () => core_edit.#tree_render(
-                {
-                    contents: "",
-                    contents_range: core_edit.#zero_range,
-                    range_extend: (range) => range.cloneRange(),
-                    normal_ranges: [
-                        ...tree_node.normal_ranges,
-                        tree_node.contents_range,
-                    ],
-                    level_info: tree_node.level_info
-                }
-            ),
-
-            braket_await_paired: (braket) => core_edit.#tree_render(
-                {
-                    contents: "",
-                    contents_range: core_edit.#zero_range,
-                    range_extend: (range) => range.cloneRange(),
-                    normal_ranges: [],
-                    level_info: {
-                        level: tree_node.level_info.level + 1,
-                        braket: braket,
-                        parent: tree_node
-                    }
-                }
-            ),
-
-            each_braket_await_paired: function* (){
-                let each_braket_until_level = function * (min_level){
-                    for(
-                        let level_info = tree_node.level_info;
-                        level_info.level >= min_level; 
-                        level_info = level_info.parent.level_info
-                    ){
-                        yield level_info;
-                    }
-                };
-
-                for(let {level,braket:this_braket,parent:root} of each_braket_until_level(0)){
-                    yield {
-                        braket: this_braket,
-                        select_braket_paired_class: (braket_paired_class) => braket_paired_class[level % braket_paired_class.length],
-                        highlight_paired_braket_and_content: (
-                            other_braket,
-                            array_paired_braket,
-                            array_normal_content,
-                            array_unpaired_brakets
-                        ) => {
-                            array_paired_braket.push(
-                                this_braket.range,
-                                other_braket.range
-                            );
-                            
-                            let normal_content_pusher = (this_level) => {
-                                array_normal_content.push(
-                                    this_level.contents_range,
-                                    ...this_level.normal_ranges
-                                );
-                            };
-
-                            let unpaired_brakets_pusher = (this_level) => {
-                                array_unpaired_brakets.push(
-                                    this_level.level_info.braket.range
-                                );
-                            };
-
-                            normal_content_pusher(tree_node);
-                            unpaired_brakets_pusher(tree_node);
-                            for(let {parent} of each_braket_until_level(level + 1)){
-                                normal_content_pusher(parent);
-                                unpaired_brakets_pusher(parent);
-                            }
-                            array_unpaired_brakets.pop(); //pop this_braket
-
-                            return core_edit.#tree_render(root).determine_normal();
-                        }
-                    };
-                }
-
-            },
-
-            highlight_content: (array) => {
-                array.push(
-                    tree_node.contents_range
-                );
-                
-                return core_edit.#tree_render(
-                    {
-                        contents: "",
-                        contents_range: core_edit.#zero_range,
-                        range_extend: (range) => range.cloneRange(),
-                        normal_ranges: tree_node.normal_ranges,
-                        level_info: tree_node.level_info
-                    }
-                );
-            },
-
-            highlight_unpaired_brakets_finally: (array_unpaired_brakets) => {
-                for(
-                    let node = tree_node;
-                    node.level_info.level >= 0;
-                    node = node.level_info.parent
-                ){
-                    array_unpaired_brakets.push(
-                        node.level_info.braket.range
-                    );
-                }
-                return null; //finally operator
-            },
-
-            get_custom_class: (content_class) => content_class(tree_node.contents) 
-        };
-    }
-
-    #clear_highlights(){
-        CSS.highlights.clear();
-    }
-
-    #highlights(class_name,range_list){
-        let highlight = new Highlight(...range_list);
-        CSS.highlights.set(class_name,highlight);
     }
 
     #is_braket(ch){
-        return this.#brakets.flatMap( ([L,_,R]) => [L,R] ).find((t) => t === ch) !== undefined;
+        return this.#brakets_set.has(ch);
     }
 
-    #text_classes_forall_brakets(){
-        return this.#brakets.map( ([L,C,R]) => C);
+    #class_for(braket){
+        return this.#brakets_class.get(braket);
     }
 
-    /**
-     * @returns null if left and right is not paired, otherwise is paired
-     */
-    #text_class_for_paired_braket(left,right){
-        return this.#brakets.find(
-            ([L,_,R]) => L === left && R === right
-        )?.[1] ?? null;
+    #expect_for(braket){
+        return this.#brakets_map.get(braket);
     }
 
     #indent(){
@@ -676,4 +545,5 @@ class core_edit{
         }
     }
 }
+
 
