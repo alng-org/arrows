@@ -220,6 +220,14 @@ class core_edit{
                 
             }
         }
+
+        //highlight unpaired brakets
+        highlight = highlights.get(
+            this.#braket_unpaired_class
+        );
+        for(let i = 0; i <= last_index; i = i + 1){
+            highlight.push( ranges[i] );
+        }
         
         for(let [clazz,lst] of highlights){
             core_edit.#highlights(clazz,lst);
@@ -515,6 +523,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
