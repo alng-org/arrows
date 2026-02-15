@@ -80,7 +80,7 @@ class core_edit{
     static #grapheme_all_set = { has: (c) => true };
     static *#graphemes(str,grapheme_int_set = core_edit.#grapheme_all_set){
         for(let grapheme of core_edit.#und_segmenter.segment(str) ){
-            if(int_set.has(grapheme.segment)){
+            if(grapheme_int_set.has(grapheme.segment)){
                 yield grapheme;
             }else{
                 //pass
@@ -183,7 +183,7 @@ class core_edit{
 
                 //highlights text directly belongs brakets
                 highlight = highlights.get(
-                    this.#brakets_class(content)
+                    this.#brakets_class.get(content)
                 );
                 ranges[last_index + 1] = range;
                 for(let i = index; i <= last_index; i = i + 1){
@@ -526,3 +526,4 @@ class core_edit{
         }
     }
 }
+
