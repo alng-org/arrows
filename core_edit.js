@@ -53,6 +53,7 @@ class core_edit{
             this.#content_class = content_class;
             this.#init();
         }else{
+            alert(1);
             throw new Error("illegal brakets");
         }
     }
@@ -209,6 +210,10 @@ class core_edit{
                         ranges[index],
                         range
                     );
+                    this.#current_pair = [
+                        ranges[index],
+                        range
+                    ];
                     for(let i = index; i <= last_index; i = i + 1){
                         vertex[i] = ranges[i];
                     }
@@ -524,6 +529,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
