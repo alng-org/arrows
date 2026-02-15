@@ -76,13 +76,18 @@ class core_edit{
         );
     }
 
-    static *#graphemes(str){
+    static *#graphemes(str,grapheme_int_set){
         for(let grapheme of new Intl.Segmenter('und').segment(str) ){
-            yield grapheme;
+            if(int_set.has(grapheme.segment)){
+                yield grapheme;
+            }else{
+                //pass
+            }
         }
     }
 
-    static *#walker(node,grapheme_by_grapheme = true){
+    static #empty_set = new Set();
+    static *#walker(node,grapheme_int_set = core_edit.#empty_set){
         node.normalize();
 
         let abstract_walker = function* (node) {
@@ -127,9 +132,9 @@ class core_edit{
             }
         };
 
-        if(grapheme_by_grapheme === true){
+        if(grapheme_int_set.size !== 0){
             for(let {content,select} of abstract_walker(node)){
-                for(let grapheme of core_edit.#graphemes(content)){
+                for(let grapheme of core_edit.#graphemes(content,grapheme_int_set)){
                     yield {
                         content: grapheme.segment,
                         range: select(grapheme.segment,grapheme.index)
@@ -145,6 +150,32 @@ class core_edit{
             }
         }
     }
+
+    #core_shader(){
+        let highlights = this.#highlights_map();
+        core_edit.#clear_highlights_in(this.#classes);
+        let expect = [];
+        let ranges = [];
+        let index = -1;
+        for(let {content,range} of core_edit.#walker(this.#node,this.#brakets_set)){
+            index = expect.lastIndexOf(content);
+            if(index === -1){ //no found
+                expect.push(
+                    this.#brakets_map.get(content) ?? ""
+                );
+                ranges.push( range );
+            }else{
+                //??
+            }
+        }
+        
+    }
+
+
+
+
+
+    
 
     #assert_brakets(brakets){
         if(
@@ -219,108 +250,6 @@ class core_edit{
     }
 
     #render(){
-        let highlights = new Map(
-            [
-                this.#braket_unpaired_class,
-                this.#braket_current_paired_class,
-                ...this.#braket_paired_class,
-                ...this.#text_classes_forall_brakets()
-            ].map(
-                (class_name) => [class_name,[]]
-            )
-        );
-        //let brakets_wait_pair = [];
-       // let brakets_unpaired = [];
-        this.#current_pair = null;
-
-        let tree_render = core_edit.#tree_render();
-
-
-        this.#clear_highlights();
-
-        for(let text of core_edit.#walker(this.#node)){
-
-            if(this.#is_braket(text.content)){
-                let maybe_braket_await_paired = () => {
-                    tree_render = tree_render.braket_await_paired(text);
-                };
-
-                for(let {
-                        braket: last,
-                        select_braket_paired_class,
-                        highlight_paired_braket_and_content
-                    } of tree_render.each_braket_await_paired()
-                ){
-
-                    let text_class = this.#text_class_for_paired_braket(
-                        last.content,
-                        text.content
-                    );
-
-                    if(text_class !== null){
-
-                        tree_render = highlight_paired_braket_and_content(
-                            text,
-                            highlights.get(
-                                select_braket_paired_class(this.#braket_paired_class)
-                            ),
-                            highlights.get(text_class),
-                            highlights.get(this.#braket_unpaired_class)
-                        );
-
-                        maybe_braket_await_paired = () => undefined;
-
-                        if(
-                            this.#current_pair === null && 
-                            core_edit.#in_paired(last.range,text.range)
-                        ){
-                            this.#current_pair = [last.range,text.range];
-                        }else{
-                            //pass
-                        }
-
-                        break;
-                    }else{
-                        //pass
-                    }
-                }
-
-                maybe_braket_await_paired();
-
-            }else{
-                tree_render = tree_render.append_content(text);
-
-                let custom_class = tree_render.get_custom_class(this.#content_class);
-                if(custom_class === null){
-                    tree_render = tree_render.determine_normal(); //determined to use default
-                }else if(custom_class === undefined){
-                    //no determined
-                }else{
-                    if(highlights.has(custom_class)){
-                        //pass
-                    }else{
-                        highlights.set(custom_class,[]);
-                    }
-
-                    tree_render = tree_render.highlight_content(
-                        highlights.get(custom_class)
-                    );
-                }
-            }
-
-        }
-
-        tree_render = tree_render.highlight_unpaired_brakets_finally(
-            highlights.get(this.#braket_unpaired_class)
-        );
-
-        highlights.get(this.#braket_current_paired_class).push(
-            ...(this.#current_pair ?? [])
-        );
-
-        for(let [class_name,range_list] of highlights){
-            this.#highlights(class_name,range_list);
-        }
 
         this.visible_sel();
     }
@@ -432,7 +361,7 @@ class core_edit{
     }
 
     static src(node){
-        return [...core_edit.#walker(node,false)].map(({content}) => content).join("");
+        return [...core_edit.#walker(node)].map(({content}) => content).join("");
     }
 
     static get_sel(){
@@ -545,5 +474,6 @@ class core_edit{
         }
     }
 }
+
 
 
