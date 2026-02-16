@@ -118,15 +118,15 @@ class core_edit{
         );
     }
 
-    static #node_range = new Range();
     static #selectNode(node){
-        core_edit.#node_range.selectNode( node );
+        let range = new Range();
+        range.selectNode( node );
         return new StaticRange(
             {
-                startContainer: core_edit.#node_range.startContainer,
-                startOffset: core_edit.#node_range.startOffset,
-                endContainer: core_edit.#node_range.endContainer,
-                endOffset: core_edit.#node_range.endOffset
+                startContainer: range.startContainer,
+                startOffset: range.startOffset,
+                endContainer: range.endContainer,
+                endOffset: range.endOffset
             }
         );
     }
@@ -221,8 +221,8 @@ class core_edit{
         );
         core_edit.#clear_highlights_in(this.#classes);
         
-        let expect = new Array(1024); //brakets expected
-        let ranges = new Array(1024); //associated ranges to brakets
+        let expect = []; //brakets expected
+        let ranges = []; //associated ranges to brakets
         let range_index = null;
         let index = -1;
         let last_index = -1;
@@ -614,6 +614,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
