@@ -55,7 +55,6 @@ class core_edit{
             this.#content_class = content_class;
             this.#init();
         }else{
-            alert(1);
             throw new Error("illegal brakets");
         }
     }
@@ -87,6 +86,7 @@ class core_edit{
             }else if( (mask & Node.DOCUMENT_POSITION_FOLLOWING) !== 0){
                 return 1;
             }else{
+                alert(1);
                 throw Error("can't compare point");
             }
         }
@@ -605,6 +605,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
