@@ -71,6 +71,7 @@ class core_edit{
     }
 
     // 0 before 1: < 0; 0 is 1: == 0; 0 after 1: > 0
+    //nan if cannot compare
     static #compare_point(
         container0,
         offset0,
@@ -95,8 +96,7 @@ class core_edit{
             }else if( (mask & Node.DOCUMENT_POSITION_FOLLOWING) !== 0){
                 return 1;
             }else{
-                alert(1);
-                throw Error("can't compare point");
+                return Number.NaN;
             }
         }
     }
@@ -614,6 +614,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
