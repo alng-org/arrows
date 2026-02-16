@@ -70,27 +70,41 @@ class core_edit{
         CSS.highlights.set(class_name,highlight);
     }
 
-    static #braket_range = new Range();
-    static #braket_range_from(srange){
-        core_edit.#braket_range.setStart(
-            srange.startContainer,
-            srange.startOffset
-        );
-        core_edit.#braket_range.setEnd(
-            srange.endContainer,
-            srange.endOffset
-        );
-        return core_edit.#braket_range;
+    // 0 before 1: < 0; 0 is 1: == 0; 0 after 1: > 0
+    static #compare_point(
+        container0,
+        offset0,
+        container1,
+        offset1
+    ){
+        if(container0 === container1){
+            return offset0 - offset1;
+        }else{
+            let mask = contianer1.compareDocumentPosition(container0);
+            if( (mask & Node.DOCUMENT_POSITION_PRECEDING) !== 0){
+                return -1;
+            }else if( (mask & Node.DOCUMENT_POSITION_FOLLOWING) !== 0){
+                return 1;
+            }else{
+                throw Error("can't compare point");
+            }
+        }
     }
     static #in_paired(left,right){
         let sel = core_edit.get_sel();
         return (
-            core_edit.#braket_range_from(
-                left
-            ).compareBoundaryPoints(Range.START_TO_END,sel) <= 0 &&
-            core_edit.#braket_range_from(
-                right
-            ).compareBoundaryPoints(Range.END_TO_START,sel) >= 0
+            core_edit.#compare_point(
+                left.endContainer,
+                left.endOffset,
+                sel.startContainer,
+                sel.startOffset
+            ) <= 0 &&
+            core_edit.#compare_point(
+                sel.endContainer,
+                sel.endOffset,
+                right.startContainer,
+                right.startOffset
+            ) >= 0
         );
     }
 
@@ -590,6 +604,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
