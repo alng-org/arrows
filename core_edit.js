@@ -133,14 +133,26 @@ class core_edit{
     }
     
     static #und_segmenter = new Intl.Segmenter('und');
-    static #grapheme_all_set = { has: (c) => true };
-    static *#graphemes(str,grapheme_int_set = core_edit.#grapheme_all_set){
-        for(let grapheme of core_edit.#und_segmenter.segment(str) ){
-            if(grapheme_int_set.has(grapheme.segment)){
-                yield grapheme;
+    static *#graphemes(str,grapheme_int_set){
+        for(let braket of grapheme_int_set){
+            if(str.includes(braket)){
+                for(let grapheme of core_edit.#und_segmenter.segment(str) ){
+                    if(grapheme_int_set.has(grapheme.segment)){
+                        yield grapheme;
+                    }else{
+                        //pass
+                    }
+                }
+                return;
             }else{
                 //pass
             }
+        }
+    }
+
+    static *#graphemes_all(str){
+        for(let grapheme of core_edit.#und_segmenter.segment(str) ){
+            yield grapheme;
         }
     }
 
@@ -351,7 +363,7 @@ class core_edit{
             );
             
             return flat_brakets.every( 
-                 (t) => [...core_edit.#graphemes(t)].length === 1
+                 (t) => [...core_edit.#graphemes_all(t)].length === 1
             ) && this.#brakets_set.size === flat_brakets.length;
         }else{
             return false;
@@ -615,6 +627,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
