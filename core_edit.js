@@ -73,7 +73,7 @@ class core_edit{
     static #braket_range = new Range();
     static #braket_range_from(srange){
         core_edit.#braket_range.setStart(
-            srange.startContanier,
+            srange.startContainer,
             srange.startOffset
         );
         core_edit.#braket_range.setEnd(
@@ -106,14 +106,7 @@ class core_edit{
             }
         );
     }
-
-
-
-
-
-
     
-
     static #und_segmenter = new Intl.Segmenter('und');
     static #grapheme_all_set = { has: (c) => true };
     static *#graphemes(str,grapheme_int_set = core_edit.#grapheme_all_set){
@@ -597,6 +590,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
