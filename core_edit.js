@@ -211,6 +211,8 @@ class core_edit{
         }
     }
 
+    #core_shader_expect = []; //for #core_shader
+    #core_shader_ranges = []; //for #core_shader
     #core_shader(){
         let vertex = []; //ranges directy belongs current brakets
         
@@ -221,8 +223,8 @@ class core_edit{
         );
         core_edit.#clear_highlights_in(this.#classes);
         
-        let expect = []; //brakets expected
-        let ranges = []; //associated ranges to brakets
+        let expect = this.#core_shader_expect; //brakets expected
+        let ranges = this.#core_shader_ranges; //associated ranges to brakets
         let range_index = null;
         let index = -1;
         let last_index = -1;
@@ -614,6 +616,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
