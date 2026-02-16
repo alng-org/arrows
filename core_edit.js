@@ -325,7 +325,7 @@ class core_edit{
             this.#brakets_map = new Map(
                 [
                     ...brakets_pair,
-                    ...brakets.map( ([_,__,R]) => [R,""]
+                    ...brakets.map( ([_,__,R]) => [R,""] )
                 ]
             );
             this.#brakets_class = new Map(
@@ -597,6 +597,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
