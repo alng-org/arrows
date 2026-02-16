@@ -104,7 +104,7 @@ class core_edit{
                 sel.endOffset,
                 right.startContainer,
                 right.startOffset
-            ) >= 0
+            ) <= 0
         );
     }
 
@@ -604,6 +604,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
