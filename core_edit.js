@@ -171,28 +171,9 @@ class core_edit{
                     return NodeFilter.FILTER_REJECT;
                 }
             };
-            let val = (node) => {
-                return {
-                    content: (node.nodeType === Node.TEXT_NODE) ? node.textContent : "\n",
-                    select: (text,index) =>{
-                        if(node.nodeType === Node.TEXT_NODE){
-                            return new StaticRange(
-                                {
-                                    startContainer: node,
-                                    startOffset: index,
-                                    endContainer: node,
-                                    endOffset: index + text.length
-                                }
-                            );
-                        }else{
-                            return core_edit.#selectNode(node);
-                        }
-                    }
-                };
-            };
-
+            
             if(filter(node) === NodeFilter.FILTER_ACCEPT){
-                yield val(node);
+                yield node;
             }else{
                 let walker = document.createTreeWalker(
                     node,
@@ -200,25 +181,41 @@ class core_edit{
                     filter
                 );
                 while(walker.nextNode()){
-                    yield val(walker.currentNode);
+                    yield walker.currentNode;
                 }
             }
         };
-
+        
+        let content = (node) => (node.nodeType === Node.TEXT_NODE) ? node.textContent : "\n";
+        let select = (node,text,index) => {
+            if(node.nodeType === Node.TEXT_NODE){
+                return new StaticRange(
+                    {
+                        startContainer: node,
+                        startOffset: index,
+                        endContainer: node,
+                        endOffset: index + text.length
+                    }
+                );
+            }else{
+                return core_edit.#selectNode(node);
+            }
+        };
+        
         if(grapheme_int_set.size !== 0){
-            for(let {content,select} of abstract_walker(node)){
-                for(let grapheme of core_edit.#graphemes(content,grapheme_int_set)){
+            for(let current of abstract_walker(node)){
+                for(let grapheme of core_edit.#graphemes(content(current),grapheme_int_set)){
                     yield {
                         content: grapheme.segment,
-                        range: select(grapheme.segment,grapheme.index)
+                        range: select(current,grapheme.segment,grapheme.index)
                     };
                 }
             }
         }else{
-            for(let {content,select} of abstract_walker(node)){
+            for(let current of abstract_walker(node)){
                 yield {
-                    content: content,
-                    range: select(content,0)
+                    content: content(current),
+                    range: select(current,content,0)
                 };
             }
         }
@@ -627,6 +624,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
