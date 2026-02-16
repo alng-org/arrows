@@ -78,6 +78,30 @@ class core_edit{
         );
     }
 
+    static #tmp_range = new Range();
+    static #selectNode(node){
+        core_edit.#tmp_range.selectNode( node );
+        return new StaticRange(
+            {
+                startContainer: core_edit.#tmp_range.startContainer,
+                startOffset: core_edit.#tmp_range.startOffset,
+                endContainer: core_edit.#tmp_range.endContainer,
+                endOffset: core_edit.#tmp_range.endOffset
+            }
+        );
+    }
+
+    static in_paired_2(left,right){
+        let sel = core_edit.get_sel();
+    }
+
+
+
+
+
+
+    
+
     static #und_segmenter = new Intl.Segmenter('und');
     static #grapheme_all_set = { has: (c) => true };
     static *#graphemes(str,grapheme_int_set = core_edit.#grapheme_all_set){
@@ -174,7 +198,7 @@ class core_edit{
             index = expect.lastIndexOf(content,last_index);
             if(index === -1){ //no found
                 last_index = last_index + 1;
-                expect[last_index] = this.#brakets_map.get(content) ?? "";
+                expect[last_index] = this.#brakets_map.get(content);
                 ranges[last_index] = range;
             }else{
                 range_index = ranges[index];
@@ -283,7 +307,12 @@ class core_edit{
 
             
             this.#brakets_set = new Set(flat_brakets);
-            this.#brakets_map = new Map(brakets_pair);
+            this.#brakets_map = new Map(
+                [
+                    ...brakets_pair,
+                    ...brakets.map( ([_,__,R]) => [R,""]
+                ]
+            );
             this.#brakets_class = new Map(
                 brakets.map( ([_,C,R]) => [R,C] )
             );
@@ -553,5 +582,6 @@ class core_edit{
         }
     }
 }
+
 
 
