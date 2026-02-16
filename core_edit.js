@@ -69,30 +69,42 @@ class core_edit{
         let highlight = new Highlight(...range_list);
         CSS.highlights.set(class_name,highlight);
     }
-    
+
+    static #braket_range = new Range();
+    static #braket_range_from(srange){
+        core_edit.#braket_range.setStart(
+            srange.startContanier,
+            srange.startOffset
+        );
+        core_edit.#braket_range.setEnd(
+            srange.endContainer,
+            srange.endOffset
+        );
+        return core_edit.#braket_range;
+    }
     static #in_paired(left,right){
         let sel = core_edit.get_sel();
         return (
-            left.compareBoundaryPoints(Range.START_TO_END,sel) <= 0 &&
-            right.compareBoundaryPoints(Range.END_TO_START,sel) >= 0
+            core_edit.#braket_range_from(
+                left
+            ).compareBoundaryPoints(Range.START_TO_END,sel) <= 0 &&
+            core_edit.#braket_range_from(
+                right
+            ).compareBoundaryPoints(Range.END_TO_START,sel) >= 0
         );
     }
 
-    static #tmp_range = new Range();
+    static #node_range = new Range();
     static #selectNode(node){
-        core_edit.#tmp_range.selectNode( node );
+        core_edit.#node_range.selectNode( node );
         return new StaticRange(
             {
-                startContainer: core_edit.#tmp_range.startContainer,
-                startOffset: core_edit.#tmp_range.startOffset,
-                endContainer: core_edit.#tmp_range.endContainer,
-                endOffset: core_edit.#tmp_range.endOffset
+                startContainer: core_edit.#node_range.startContainer,
+                startOffset: core_edit.#node_range.startOffset,
+                endContainer: core_edit.#node_range.endContainer,
+                endOffset: core_edit.#node_range.endOffset
             }
         );
-    }
-
-    static in_paired_2(left,right){
-        let sel = core_edit.get_sel();
     }
 
 
@@ -133,14 +145,17 @@ class core_edit{
                 return {
                     content: (node.nodeType === Node.TEXT_NODE) ? node.textContent : "\n",
                     select: (text,index) =>{
-                        let range = new Range();
                         if(node.nodeType === Node.TEXT_NODE){
-                            range.setStart(node,index);
-                            range.setEnd(node,index + text.length);
-                            return range;
+                            return new StaticRange(
+                                {
+                                    startContainer: node,
+                                    startOffset: index,
+                                    endContainer: node,
+                                    endOffset: index + text.length
+                                }
+                            );
                         }else{
-                            range.selectNode(node);
-                            return range;
+                            return core_edit.#selectNode(node);
                         }
                     }
                 };
@@ -582,6 +597,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
