@@ -55,6 +55,7 @@ class core_edit{
             this.#content_class = content_class;
             this.#init();
         }else{
+            alert(1);
             throw new Error("illegal brakets");
         }
     }
@@ -604,6 +605,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
