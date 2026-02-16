@@ -121,14 +121,15 @@ class core_edit{
     static #selectNode(node){
         let range = new Range();
         range.selectNode( node );
-        return new StaticRange(
+        return range;
+        /*return new StaticRange(
             {
                 startContainer: range.startContainer,
                 startOffset: range.startOffset,
                 endContainer: range.endContainer,
                 endOffset: range.endOffset
             }
-        );
+        );*/
     }
     
     static #und_segmenter = new Intl.Segmenter('und');
@@ -614,6 +615,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
