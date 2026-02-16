@@ -81,7 +81,7 @@ class core_edit{
             return offset0 - offset1;
         }else{
             let C = (container,offset) => {
-                if(node.nodeType === Node.TEXT_NODE){
+                if(container.nodeType === Node.TEXT_NODE){
                     return container;
                 }else{
                     return container.childNodes[offset];
@@ -614,6 +614,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
