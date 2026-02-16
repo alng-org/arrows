@@ -80,7 +80,7 @@ class core_edit{
         if(container0 === container1){
             return offset0 - offset1;
         }else{
-            let mask = contianer1.compareDocumentPosition(container0);
+            let mask = container1.compareDocumentPosition(container0);
             if( (mask & Node.DOCUMENT_POSITION_PRECEDING) !== 0){
                 return -1;
             }else if( (mask & Node.DOCUMENT_POSITION_FOLLOWING) !== 0){
@@ -605,6 +605,7 @@ class core_edit{
         }
     }
 }
+
 
 
 
