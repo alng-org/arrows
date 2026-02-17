@@ -2,7 +2,8 @@ class core_edit{
     #node;
     #brakets_set; //all L,R
     #brakets_map; // L -> R
-    #brakets_class; // R -> C
+    #brakets_id; //map: L -> x, R -> ~x  ,where x > 0
+    #brakets_class; //array: [x] = C, where L -> x
     #braket_unpaired_class;
     #braket_paired_class;
     #braket_current_paired_class;
@@ -45,7 +46,7 @@ class core_edit{
                 this.#braket_unpaired_class,
                 ...this.#braket_paired_class,
                 this.#braket_current_paired_class,
-                ...this.#brakets_class.values()
+                ...this.#brakets_class.slice(1)
             ];
             
             this.#highlights_map = () => new Map(
@@ -236,11 +237,18 @@ class core_edit{
         let range_index = null;
         let index = -1;
         let last_index = -1;
+        let id = 0;
         for(let {content,range} of core_edit.#walker(this.#node,this.#brakets_set)){
-            index = expect.lastIndexOf(content,last_index);
+            id = this.#brakets_id.get(content);
+            if(id < 0){
+                index = expect.lastIndexOf(id,last_index);
+            }else{
+                index = -1;
+            }
+            
             if(index === -1){ //no found
                 last_index = last_index + 1;
-                expect[last_index] = this.#brakets_map.get(content);
+                expect[last_index] = ~id;
                 ranges[last_index] = range;
             }else{
                 range_index = ranges[index];
@@ -257,11 +265,11 @@ class core_edit{
 
                 //highlights text directly belongs brakets
                 highlight = highlights.get(
-                    this.#brakets_class.get(content)
+                    this.#brakets_class[~id]
                 );
                 ranges[last_index + 1] = range;
                 for(let i = index; i <= last_index; i = i + 1){
-                    if(expect[i] === ""){
+                    if((~expect[i]) < 0 ){ //line:aabb
                         highlight_unpair.push(ranges[i]);
                     }else{
                         //pass
@@ -306,7 +314,7 @@ class core_edit{
                 }
 
                 //logic pending
-                expect[index] = "..";
+                expect[index] = ~0; //magic number,due to line:aabb
                 ranges[index] = new StaticRange(
                     {
                         startContainer: range_index.startContainer,
@@ -338,7 +346,7 @@ class core_edit{
 
     #assert_brakets(brakets){
         if(
-            (brakets instanceof Array) && (brakets.length >= 1) &&
+            (brakets instanceof Array) && (brakets.length >= 1) && (brakets.length + 1 > 0) &&
             brakets.every( 
                 (paired) => (paired instanceof Array) && (paired.length === 3) &&
                                        paired.every((t) => typeof(t) === "string")
@@ -349,15 +357,19 @@ class core_edit{
 
             
             this.#brakets_set = new Set(flat_brakets);
-            this.#brakets_map = new Map(
-                [
-                    ...brakets_pair,
-                    ...brakets.map( ([_,__,R]) => [R,""] )
-                ]
-            );
-            this.#brakets_class = new Map(
-                brakets.map( ([_,C,R]) => [R,C] )
-            );
+            this.#brakets_map = new Map(brakets_pair);
+
+
+            this.#brakets_id = new Map();
+            this.#brakets_class = new Array(brakets.length + 1);
+            for(let i = 0; i < brakets.length; i = i + 1){
+                let [L,C,R] = brakets[i];
+                this.#brakets_id(L, i + 1);
+                this.#brakets_id(R, ~(i + 1));
+                this.#brakets_class[i + 1] = C;
+                
+            }
+
             
             return flat_brakets.every( 
                  (t) => [...core_edit.#graphemes_all(t)].length === 1
@@ -624,8 +636,3 @@ class core_edit{
         }
     }
 }
-
-
-
-
-
