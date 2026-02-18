@@ -246,7 +246,7 @@ class core_edit{
                 index = -1;
             }
             
-            if(index === -1){ //no found
+            if(index < 0){ //no found
                 last_index = last_index + 1;
                 expect[last_index] = ~id;
                 ranges[last_index] = range;
@@ -364,8 +364,8 @@ class core_edit{
             this.#brakets_class = new Array(brakets.length + 1);
             for(let i = 0; i < brakets.length; i = i + 1){
                 let [L,C,R] = brakets[i];
-                this.#brakets_id(L, i + 1);
-                this.#brakets_id(R, ~(i + 1));
+                this.#brakets_id.set(L, i + 1);
+                this.#brakets_id.set(R, ~(i + 1));
                 this.#brakets_class[i + 1] = C;
                 
             }
@@ -636,3 +636,4 @@ class core_edit{
         }
     }
 }
+
