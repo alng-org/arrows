@@ -352,20 +352,45 @@ class core_edit{
                                        paired.every((t) => typeof(t) === "string")
             )
         ){
-            let brakets_pair = brakets.map( ([L,_,R]) => [L,R] );
-            let flat_brakets = brakets_pair.flat();
+            let flat_brakets_NFC = brakets.flatMap(
+                ([L,_,R]) => [
+                    L.normalize("NFC"),
+                    R.normalize("NFC")
+                ]
+            );
+            let brakets_set_NFC = new Set(flat_brakets_NFC);
 
             
-            this.#brakets_set = new Set(flat_brakets);
-            this.#brakets_map = new Map(brakets_pair);
+            this.#brakets_set = new Set(
+                brakets.flatMap(
+                    ([L,_,R]) => [
+                        L.normalize("NFC"),
+                        R.normalize("NFC"),
+                        L.normalize("NFD"),
+                        R.normalize("NFD")
+                    ]
+                )
+            );
+            this.#brakets_map = new Map(
+                [
+                    ...brakets.map( 
+                        ([L,_,R]) => [L.normalize("NFC"),R.normalize("NFC")]
+                    ),
+                    ...brakets.map( 
+                        ([L,_,R]) => [L.normalize("NFD"),R.normalize("NFD")]
+                    )
+                ]
+            );
 
 
             this.#brakets_id = new Map();
             this.#brakets_class = new Array(brakets.length + 1);
             for(let i = 0; i < brakets.length; i = i + 1){
                 let [L,C,R] = brakets[i];
-                this.#brakets_id.set(L, i + 1);
-                this.#brakets_id.set(R, ~(i + 1));
+                this.#brakets_id.set(L.normalize("NFC"), i + 1);
+                this.#brakets_id.set(R.normalize("NFC"), ~(i + 1));
+                this.#brakets_id.set(L.normalize("NFD"), i + 1);
+                this.#brakets_id.set(R.normalize("NFD"), ~(i + 1));
                 this.#brakets_class[i + 1] = C;
                 
             }
@@ -373,7 +398,7 @@ class core_edit{
             
             return flat_brakets.every( 
                  (t) => [...core_edit.#graphemes_all(t)].length === 1
-            ) && this.#brakets_set.size === flat_brakets.length;
+            ) && brakets_set_NFC.size === flat_brakets_NFC.length;
         }else{
             return false;
         }
@@ -636,3 +661,4 @@ class core_edit{
         }
     }
 }
+
