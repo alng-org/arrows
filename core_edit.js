@@ -636,4 +636,3 @@ class core_edit{
         }
     }
 }
-
