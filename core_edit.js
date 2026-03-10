@@ -231,6 +231,7 @@ class core_edit{
             this.#braket_unpaired_class
         );
         core_edit.#clear_highlights_in(this.#classes);
+        this.#current_pair = null; //clear current pair
         
         let expect = []; //brakets expected
         let ranges = []; //associated ranges to brakets
@@ -626,8 +627,7 @@ class core_edit{
         }   
     }
 
-    expand_sel(){
-        let sel = core_edit.get_sel();
+    expand_sel(sel = core_edit.get_sel()){
         if(this.#current_pair === null){
             //PASS
         }else{
@@ -655,5 +655,6 @@ class core_edit{
         }
     }
 }
+
 
 
